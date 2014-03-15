@@ -1,5 +1,5 @@
 <?php
-class alumnosMdl{
+class asistenciasMdl{
 	public $bd_driver;
 	
 	function __construct(){

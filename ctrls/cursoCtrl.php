@@ -1,11 +1,6 @@
 <?php
-class grupoCtrl{
-	public $modelo;
-	function __construct(){
-		//Definimos el modelo
-		require('mdls/grupoMdl.php');
-		$this->modelo = new grupoMdl();
-	}
+require_once('ControladorComun.php');
+class cursoCtrl extends ControladorComun{
 
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
@@ -20,67 +15,46 @@ class grupoCtrl{
 				//Validar datos
 				//Datos requeridos Nombre, Seccion, NRC, opcionales, academia, dias clase, horas por dia
 				//nombre=a&seccion=D05&nrc=2&evaluacion[]=&dia_sem[]=1&dia_sem[]=3&fec_ini=25/02/2014&fec_fin=30/6/2014
-				if( !isset($_VAR['nombre']) || !isset($_VAR['seccion']) ||
-						!isset($_VAR['nrc']) || !isset($_VAR['evaluacion']) ||
-						!isset($_VAR['dia_sem']) || !isset($_VAR['fec_ini']) ||
-						!isset($_VAR['fec_fin'])
+				if( !isset($_VAR['cicloEscolar']) || !isset($_VAR['nombre']) 
+						|| !isset($_VAR['seccion']) || !isset($_VAR['academia']) 
+						|| !isset($_VAR['nrc'])|| !isset($_VAR['diasSemana_Horas'])
+						|| !isset($_VAR['fechaInicio'])|| !isset($_VAR['fechaFinal'])
 						){
 					$error='no se indicaron datos suficientes';
 					require('vistas/error.php');
 					die;
 				}
 
-				$nombre = $_VAR['nombre'];
-				$nrc  = $_VAR['nrc'];
-				$seccion = $_VAR['seccion'];
-				$evaluacion = $_VAR['evaluacion'];
+				$seccion 		= $_VAR['seccion'];
+				$cicloEscolar 	= $_VAR['cicloEscolar'];
+				$nombre 		= $_VAR['nombre'];
+				$academia  		= $_VAR['academia'];
+				$nrc  			= $_VAR['nrc'];
+				$diasSemana_Horas = $_VAR['diasSemana_Horas'];
+				$fechaInicio = $_VAR['fechaInicio'];
+				$fechaFinal = $_VAR['fechaFinal'];
 
-				$dia_sem = $_VAR['dia_sem'];
-				$fec_ini = $_VAR['fec_ini'];
-				$fec_fin = $_VAR['fec_fin'];
 
-
-				//seccion
+				//seccion CC100-D02
 				if( !preg_match("/^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i",$_VAR['seccion']) ){
 					$error='seccion incorrecta';
 					require('vistas/error.php');
 					die;
 				}
 
-				//evaluacion
-				/*if( is_array($evaluacion) ){
-					$error='evaluacion debe ser un arreglo de conceptos con su porcentaje';
-					require('vistas/error.php');
-					die;
-				}*/
+				//Calcula dias validos entre fechaInicio y fechaFin con  diasSemana dados
+				//Se creara arreglo $diasCurso
+				$diasCurso_Horas=array();
 
-				//dias semana
-				if( !is_array($dia_sem) ){
-					$error='Dias semana debe ser arreglo';
-					require('vistas/error.php');
-					die;
-				}
-
-				foreach($dia_sem as $dsem ){
-					if( $dsem<1 && $dsem>6){
-						$error = 'Rango de días incorrecto';
-						require('vistas/error.php');
-						die;
-					}
-				}
-
-				//fechas
-				$fec_ini1 = explode("/",$fec_ini);
+				$fec_ini1 = explode("/",$fechaInicio);
 				if( !checkdate($fec_ini1[1],$fec_ini1[0],$fec_ini1[2]) ){
 						$error = 'Fecha inicio no valida '.$fec_ini;
 						require('vistas/error.php');
-						die;
 				}
-				$fec_fin2 = explode("/",$fec_fin);
+				$fec_fin2 = explode("/",$fechaFinal);
 				if( !checkdate($fec_fin2[1],$fec_fin2[0],$fec_fin2[2]) ){
 						$error = 'Fecha fin no valida';
 						require('vistas/error.php');
-						die;
 				}
 
 				$arre_diasem=array('Domingo','Lunes','Martes','Miercoles','Jueves','Viernes');
@@ -90,45 +64,69 @@ class grupoCtrl{
 				$dia_fin = mktime(0,0,0,$fec_fin2[1],$fec_fin2[0],$fec_fin2[2])+$un_dia ;
 
 				while( $dia_ini<$dia_fin ){
-					if( in_array(date('w',$dia_ini),$dia_sem) )
-						echo $arre_diasem[date('w',$dia_ini)],' ',date('d-m-Y',$dia_ini),'<br>';
+					if( array_key_exists(date('w',$dia_ini),$diasSemana_Horas) ){
+						$diasCurso_Horas[$dia_ini]=$diasSemana_Horas[date('w',$dia_ini)];
+					}
 					$dia_ini += $un_dia;
-				}die;
+				}
 
 				//Llamada al modelo	
-				$estatus = $this->modelo->alta($nombre,$nrc,$seccion);
+				$estatus = $this->modelo->alta($cicloEscolar,$nombre,$seccion,$academia,$nrc,$diasCurso_Horas);
 				//Carga vista dependiendo de la respuesta del modelo
 				if( $estatus ){
-					require('vistas/grupoAlta.php');
+					require('vistas/curso/alta.php');
 				}else{
 					$error='falla interna Mdl';
 					require('vistas/error.php');
 				}
 				break;
+
 			case 'consulta':
 				//Validar datos
 				//Datos requeridos
 				if( !isset($_GET['seccion']) ){
-					$error='no se indico grupo';
+					$error='no se indico curso';
 					require('vistas/error.php');
 					die;
 				}
 				if( !preg_match("/^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i",$_GET['seccion']) ){
-					$error='grupo incorrecta';
+					$error='curso incorrecta';
 					require('vistas/error.php');
 					die;
-				}
-				//Datos opcionales
-				if( !isset($_GET['orden'])){
-					$_GET['orden']='';
 				}
 
 
 				//Llamada al modelo	
-				$listaAlumnos = $this->modelo->listaEstudiantes($_GET['seccion'],$_GET['orden']);
+				$datos = $this->modelo->consulta($_GET['seccion']);
 				//Carga vista dependiendo de la respuesta del modelo
-				if( is_array($listaAlumnos) ){
-					require('vistas/grupoLista.php');
+				if( is_array($datos) ){
+					require('vistas/curso/consulta.php');
+				}else{
+					$error='falla interna';
+					require('vistas/error.php');
+				}
+				break;
+
+			case 'baja':
+				//Validar datos
+				//Datos requeridos
+				if( !isset($_GET['seccion']) ){
+					$error='no se indico curso';
+					require('vistas/error.php');
+					die;
+				}
+				if( !preg_match("/^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i",$_GET['seccion']) ){
+					$error='curso incorrecta';
+					require('vistas/error.php');
+					die;
+				}
+
+
+				//Llamada al modelo	
+				$datos = $this->modelo->baja($_GET['seccion']);
+				//Carga vista dependiendo de la respuesta del modelo
+				if( is_array($datos) ){
+					require('vistas/curso/baja.php');
 				}else{
 					$error='falla interna';
 					require('vistas/error.php');

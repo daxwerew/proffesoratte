@@ -1,11 +1,6 @@
 <?php
-class profesorCtrl{
-	public $modelo;
-	function __construct(){
-		//Definimos el modelo
-		require('mdls/profesorMdl.php');
-		$this->modelo = new profesorMdl();
-	}
+require_once('ControladorComun.php');
+class profesorCtrl extends ControladorComun{
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
@@ -28,7 +23,7 @@ class profesorCtrl{
 					$codigo = $_GET['codigo'];
 
 					//Nombre
-					if( !preg_match("/^([a-z| ]+$/i",$nombre) ){
+					if( !preg_match("/^[a-z| ]+$/i",$nombre) ){
 						$error='nombre de alumno no convencional';
 						require('vistas/error.php');
 						die;
@@ -39,7 +34,7 @@ class profesorCtrl{
 				$status = $this->modelo->alta($nombre,$codigo);
 				if( $status ){
 					//Cargo vista de bien hecho
-					require('vistas/profesorInsertado.php');
+					require('vistas/profesor/insertado.php');
 				}else{
 					require('vistas/error.php');
 				}
@@ -59,7 +54,7 @@ class profesorCtrl{
 					//Ahora si le hablo al modelo
 					$status = $this->modelo->baja($codigo);
 					if( $status ){
-						require('vistas/profesorBorrado.php');
+						require('vistas/profesor/borrado.php');
 					}else{
 						$error = 'Ocurrio un error al dar de baja';
 						require('vistas/error.php');
@@ -81,7 +76,7 @@ class profesorCtrl{
 					//Ahora si le hablo al modelo
 					$status = $this->modelo->consulta($codigo);
 					if( $status ){
-						require('vistas/profesorConsulta.php');
+						require('vistas/profesor/consulta.php');
 					}else{
 						$error = 'Ocurrio un error al consultar alumno';
 						require('vistas/error.php');

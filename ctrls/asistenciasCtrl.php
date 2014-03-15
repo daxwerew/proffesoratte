@@ -1,11 +1,6 @@
 <?php
-class asistenciasCtrl{
-	public $modelo;
-	function __construct(){
-		//Definimos el modelo
-		require('mdls/asistenciasMdl.php');
-		$this->modelo = new asistenciasMdl();
-	}
+require_once('ControladorComun.php');
+class asistenciasCtrl extends ControladorComun{
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
@@ -40,14 +35,14 @@ class asistenciasCtrl{
 				$status = $this->modelo->alta($grupo,$alumnos,$fecha);
 				if( $status ){
 					//Cargo vista de bien hecho
-					require('vistas/asistenciasInsertadas.php');
+					require('vistas/asistenciasViews/asistenciasConsulta.php');
 				}else{
 					require('vistas/error.php');
 				}
 				break;
 
 
-			case 'modificacion':
+			case 'modificar':
 					//Validar datos
 
 					if( !isset($_GET['grupo']) || !isset($_GET['alumnos']) || !isset($_GET['fecha'])  ){
@@ -70,7 +65,7 @@ class asistenciasCtrl{
 					//Ahora si le hablo al modelo
 					$status = $this->modelo->modifica($grupo,$alumnos,$fecha);
 					if( $status ){
-						require('vistas/asistenciaConsulta.php');
+						require('vistas/asistenciasViews/asistenciaConsulta.php');
 					}else{
 						$error = 'Ocurrio un error al modificar';
 						require('vistas/error.php');
@@ -92,7 +87,7 @@ class asistenciasCtrl{
 					//Ahora si le hablo al modelo
 					$status = $this->modelo->consulta($grupo);
 					if( $status ){
-						require('vistas/asistenciaConsulta.php');
+						require('vistas/asistenciasViews/asistenciasConsulta.php');
 					}else{
 						$error = 'Ocurrio un error al consultar alumno';
 						require('vistas/error.php');

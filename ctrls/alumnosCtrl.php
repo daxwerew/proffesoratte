@@ -32,8 +32,8 @@ class alumnosCtrl extends ControladorComun{
 					$email   = $_GET['email'];
 
 					//Nombre
-					if( !preg_match("/^([a-z| ]+$/i",$nombre) ){
-						$error='nombre de alumno no convencional';
+					if( !preg_match('/^[a-z| ]+$/i',$nombre) ){
+						$error="nombre de alumno $nombre no convencional";
 						require('vistas/error.php');
 					}
 
@@ -97,6 +97,41 @@ class alumnosCtrl extends ControladorComun{
 					}
 
 
+				break;
+			case 'modificar':
+				//Validar datos
+
+					if( !isset($_GET['codigo']) ){
+						$error='no se recibieron datos completos para modificar alumno';
+						require('vistas/error.php');
+					}
+
+					$codigo = $_GET['codigo'];
+					$nombre = isset($_GET['nombre'])?$_GET['nombre']:null;
+					$carrera = isset($_GET['carrera'])?$_GET['carrera']:null;
+					$email   = isset($_GET['email'])?$_GET['email']:null;
+
+					//Nombre
+					if( isset($nombre) && !preg_match("/^[a-z| ]+$/i",$nombre) ){
+						$error='nombre de alumno no convencional';
+						require('vistas/error.php');
+					}
+
+					//email
+					if( isset($email) && !preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i",$email) ){
+						$error='nombre de alumno no convencional';
+						require('vistas/error.php');
+					}
+
+				
+				//Ahora si le hablo al modelo
+				$resultado = $this->modelo->modificar($nombre,$codigo,$carrera,$email);
+				if( $resultado ){
+					//Cargo vista de bien hecho
+					require('vistas/alumnosConsulta.php');
+				}else{
+					require('vistas/error.php');
+				}
 				break;
 
 

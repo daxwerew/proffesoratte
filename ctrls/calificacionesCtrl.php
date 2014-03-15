@@ -1,11 +1,6 @@
 <?php
-class alumnosCtrl{
-	public $modelo;
-	function __construct(){
-		//Definimos el modelo
-		require('mdls/alumnosMdl.php');
-		$this->modelo = new alumnosMdl();
-	}
+require_once('ControladorComun.php');
+class calificacionesCtrl extends ControladorComun{
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
@@ -20,30 +15,29 @@ class alumnosCtrl{
 			case 'alta':
 				//Validar datos
 
-					if( !isset($_GET['nrc']) || !isset($_GET['alumnos']) ||
+					if( !isset($_GET['grupo']) || !isset($_GET['alumnos']) ||
 							!isset($_GET['evaluacion']) ){
 						$error='no se recibieron datos completos para calificar';
 						require('vistas/error.php');
 					}
 
-					$nrc = $_GET['nrc'];
+					$grupo = $_GET['grupo'];
 					$evaluacion = $_GET['evaluacion'];
 					$alumnos = $_GET['alumnos'];
 
 
 					//alumnos
-					if( is_array($alumnos) ){
+					if( !is_array($alumnos) ){
 						$error='alumnos debe ser un arreglo alumno-calificación';
 						require('vistas/error.php');
-						die;
 					}
 
 				
 				//Ahora si le hablo al modelo
-				$status = $this->modelo->alta($nrc,$evaluacion,$alumnos);
+				$status = $this->modelo->alta($grupo,$evaluacion,$alumnos);
 				if( $status ){
 					//Cargo vista de bien hecho
-					require('vistas/calificacionesInsertado.php');
+					require('vistas/calificaciones/insertado.php');
 				}else{
 					require('vistas/error.php');
 				}
@@ -51,22 +45,22 @@ class alumnosCtrl{
 
 
 
-			case 'modificacion':
+			case 'modificar':
 
 				//Validar datos
-					if( !isset($_GET['nrc']) || !isset($_GET['alumnos']) ||
+					if( !isset($_GET['grupo']) || !isset($_GET['alumnos']) ||
 							!isset($_GET['evaluacion']) ){
 						$error='no se recibieron datos completos para calificar';
 						require('vistas/error.php');
 					}
 
-					$nrc = $_GET['nrc'];
+					$grupo = $_GET['grupo'];
 					$evaluacion = $_GET['evaluacion'];
 					$alumnos = $_GET['alumnos'];
 
 
 					//alumnos
-					if( is_array($alumnos) ){
+					if( !is_array($alumnos) ){
 						$error='alumnos debe ser un arreglo alumno-calificación';
 						require('vistas/error.php');
 						die;
@@ -74,10 +68,10 @@ class alumnosCtrl{
 
 				
 				//Ahora si le hablo al modelo
-				$status = $this->modelo->modificacion($nrc,$evaluacion,$alumnos);
+				$status = $this->modelo->modificar($grupo,$evaluacion,$alumnos);
 				if( $status ){
 					//Cargo vista de bien hecho
-					require('vistas/calificacionesModificado.php');
+					require('vistas/calificaciones/modificado.php');
 				}else{
 					require('vistas/error.php');
 				}
@@ -87,19 +81,19 @@ class alumnosCtrl{
 			case 'consulta':
 
 				//Validar datos
-					if( !isset($_GET['nrc']) || !isset($_GET['evaluacion']) ){
+					if( !isset($_GET['grupo']) || !isset($_GET['evaluacion']) ){
 						$error='no se recibieron datos completos para consultar';
 						require('vistas/error.php');
 					}
 
-					$nrc = $_GET['nrc'];
+					$grupo = $_GET['grupo'];
 					$evaluacion = $_GET['evaluacion'];
 
 				
 					//Ahora si le hablo al modelo
-					$status = $this->modelo->consulta($nrc,$evaluacion);
+					$status = $this->modelo->consulta($grupo,$evaluacion);
 					if( $status ){
-						require('vistas/calificacionesConsulta.php');
+						require('vistas/calificaciones/consulta.php');
 					}else{
 						$error = 'Ocurrio un error al consultar calificaciones';
 						require('vistas/error.php');

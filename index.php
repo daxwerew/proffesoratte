@@ -1,44 +1,24 @@
 <?php
-	if( isset($_GET['controlador']) ){
-		//Carga Controlador Correspondiente
-		switch( $_GET['controlador'] ){
+	if( isset($_GET['ctrl']) ){
 
-			case 'alumno':
-				require('ctrls/alumnosCtrl.php');
-				$controlador = new alumnosCtrl();
-				break;
+		//Carga ctrl Correspondiente
+		$controlador = "{$_GET['ctrl']}Ctrl";
 
-			case 'profesor':
-				require('ctrls/profesorCtrl.php');
-				$controlador = new alumnosCtrl();
-				break;
+		if(file_exists("ctrls/{$controlador}.php")){
+			require("ctrls/{$controlador}.php");
+			$ctrl = new $controlador();
 
-			case 'grupo':
-				require('ctrls/grupoCtrl.php');
-				$controlador = new grupoCtrl();
-				break;
-
-			case 'ciclo_escolar':
-				require('ctrls/cicloEscolarCtrl.php');
-				$controlador = new alumnosCtrl();
-				break;
-
-			case 'calificaciones':
-				require('ctrls/calificacionCtrl.php');
-				$controlador = new alumnosCtrl();
-				break;
-
-			default:
-				$error='controlador incorrecto';
-				require('vistas/error.php');
-				die;
+		}else{
+			$error="{$_GET['ctrl']} no es un controlador valido";
+			require('vistas/error.php');
 		}
+
 	}else{
-		//Controlador default
+		//ctrl default
 		require('ctrls/alumnosCtrl.php');
-		$controlador = new alumnosCtrl();
+		$ctrl = new alumnosCtrl();
 		
 	}
 	
-	$controlador->ejecutar();
+	$ctrl->ejecutar();
 	

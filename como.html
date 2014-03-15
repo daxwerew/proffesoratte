@@ -1,0 +1,338 @@
+<html>
+<body>
+	<h1>Como Funciona</h1>
+	<p>Esta es una peque&ntilde;a ayuda de como interactuar con el esqueleto MVC del proyecto proffesoratte, para llegar a un controlador se debe acceder a website/?ctrl=TuControlador</p>
+	<p>A continuacion todos los controladores y sus posibles recepeciones de datos, por ahora todas son por method Get</p>
+	<h1>Controladores</h1>
+	<h2>Alumnos</h2>
+	Nombre Archivo: alumnosCtrl.php
+	<h3>Acciones</h3>
+
+	<h4>Alta</h4>
+	<p>Crear Alumno</p>
+	<ul>
+	<li>Url: website/?ctrl=alumnos&accion=alta
+	<li>Parametros Forzosos: 
+		<ul>
+		<li>nombre: que cumpla /^[a-z| ]+$/i
+		<li>codigo 
+		<li>carrera 
+		<li>email: que cumpla /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
+		</ul>
+	<li>Ejemplo: website/?ctrl=alumnos&accion=alta&nombre=Diego&codigo=20&carrera=COM&email=a@a.net
+	</ul>
+	
+	<h4>Baja</h4>
+	<p>Eliminar Alumno</p>
+	<ul>
+		<li>Url: website/?ctrl=alumnos&accion=baja
+		<li>Parametros Forzosos: 
+			<ul>
+				<li>codigo
+			</ul>
+		<li>Ejemplo: website/?ctrl=alumnos&accion=baja&codigo=20
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta datos de un Alumno</p>
+	<ul>
+		<li>Url: website/?ctrl=alumnos&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+				<li>codigo
+			</ul>
+		<li>Ejemplo: website/?ctrl=alumnos&accion=consulta&codigo=20
+	</ul>
+	
+	<h4>Modificar</h4>
+	<p>Consulta datos de un Alumno</p>
+	<ul>
+		<li>Url: website/?ctrl=alumnos&accion=modificar
+		<li>Parametros Forzosos: 
+			<ul>
+				<li>codigo 
+			</ul>
+		<li>Parametros Opcionales: 
+			<ul>
+				<li>nombre: que cumpla /^[a-z| ]+$/i
+				<li>carrera 
+				<li>email: que cumpla /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
+			</ul>
+		<li>Ejemplo: website/?ctrl=alumnos&accion=modificar&nombre=Diego&codigo=20&carrera=COM&email=a@a.net
+	</ul>
+	<h2>Asistencias</h2>
+	Nombre Archivo: asistenciasCtrl.php
+	<h3>Acciones</h3>
+	<h4>Alta</h4>
+	<p>Crear Asistencias</p>
+	<ul>
+		<li>Url: website/?ctrl=asistencias&accion=alta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>grupo
+			<li>fecha 
+			<li>alumnos: debe ser un arreglo de formato arr[alumno] = tipoAsistencia
+			</ul>
+		<li>Ejemplo: website/?ctrl=asistencias&accion=alta&grupo=405&fecha=20/02/2014&alumnos[20]=DE&alumnos[405]=DA
+	</ul>
+	
+	<h4>Modificar</h4>
+	<p>Modificar Asistencias</p>
+	<ul>
+		<li>Url: website/?ctrl=asistencias&accion=modificar
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>grupo
+			<li>fecha 
+			<li>alumnos: debe ser un arreglo de formato arr[alumno] = tipoAsistencia
+			</ul>
+		<li>Ejemplo: website/?ctrl=asistencias&accion=modificar&grupo=405&fecha=20/02/2014&alumnos[20]=DE&alumnos[405]=DA
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta Asistencias</p>
+	<ul>
+		<li>Url: website/?ctrl=asistencias&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>grupo
+			<li>fecha
+			</ul>
+		<li>Ejemplo: website/?ctrl=asistencias&accion=consulta&grupo=405&fecha=20/02/2014
+	</ul>
+
+	<h2>Calificaciones</h2>
+	Nombre Archivo: calificacionesCtrl.php
+	<h3>Acciones</h3>
+	<h4>Alta</h4>
+	<p>Crear Calificaciones</p>
+	<ul>
+		<li>Url: website/?ctrl=calificaciones&accion=alta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>grupo
+			<li>evaluacion: rubro de evaluacion 
+			<li>alumnos: debe ser un arreglo de formato alumnos[codigo] = calificacion
+			</ul>
+		<li>Ejemplo: website/?ctrl=calificaciones&accion=alta&grupo=405&evaluacion=4&alumnos[20]=9.5&alumnos[405]=8
+	</ul>
+	
+	<h4>Modificar</h4>
+	<p>Modificar Calificaciones</p>
+	<ul>
+		<li>Url: website/?ctrl=calificaciones&accion=modificar
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>grupo
+			<li>evaluacion: rubro de evaluacion 
+			<li>alumnos: debe ser un arreglo de formato alumnos[codigo] = calificacion
+			</ul>
+		<li>Ejemplo: website/?ctrl=calificaciones&accion=modificar&grupo=405&evaluacion=4&alumnos[20]=9.5&alumnos[405]=8
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta Calificaciones</p>
+	<ul>
+		<li>Url: website/?ctrl=calificaciones&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>grupo
+			<li>evaluacion: rubro de evaluacion 
+			</ul>
+		<li>Ejemplo: website/?ctrl=calificaciones&accion=consulta&grupo=405&evaluacion=4
+	</ul>
+
+
+
+	<h2>Ciclo Escolar</h2>
+	Nombre Archivo: cicloEscolarCtrl.php
+	<h3>Acciones</h3>
+	<h4>Alta</h4>
+	<p>Crear ciclo escolar y sus dias apartir de una fecha de inicio y fecha de fin</p>
+	<ul>
+		<li>Url: website/?ctrl=cicloEscolar&accion=alta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>ciclo: que coincida con /^2[0-9]{3}[ABV]$/i
+			<li>fechaInicio
+			<li>fechaFinal
+			<li>diasSemana: un arreglo de dias de semana donde 0 es domingo y 6 es sabado
+			</ul>
+		<li>Ejemplo: website/?ctrl=cicloEscolar&accion=alta&ciclo=2014A&fechaInicio=14/02/2014&fechaFinal=14/06/2014&diasSemana[]=1&diasSemana[]=3
+	</ul>
+	
+	<h4>Modificar</h4>
+	<p>Modificar ciclo escolar</p>
+	<ul>
+		<li>Url: website/?ctrl=cicloEscolar&accion=modificar
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>ciclo
+			<li>festivos: arreglo de fechas a excluir
+			</ul>
+		<li>Ejemplo: website/?ctrl=cicloEscolar&accion=modificar&ciclo=2014A&festivos[]=21/03/2014&festivos[]=14/04/2014&
+	</ul>
+	
+	<h4>Baja</h4>
+	<p>Elimina ciclo escolar</p>
+	<ul>
+		<li>Url: website/?ctrl=cicloEscolar&accion=baja
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>ciclo
+			</ul>
+		<li>Ejemplo: website/?ctrl=cicloEscolar&accion=baja&ciclo=2014A
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta ciclo escolar</p>
+	<ul>
+		<li>Url: website/?ctrl=cicloEscolar&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>ciclo
+			</ul>
+		<li>Ejemplo: website/?ctrl=cicloEscolar&accion=consulta&ciclo=2014A
+	</ul>
+
+
+
+	<h2>Curso</h2>
+	Nombre Archivo: cursoCtrl.php
+	<h3>Acciones</h3>
+	<h4>Alta</h4>
+	<p>Crea un curso</p>
+	<ul>
+		<li>Url: website/?ctrl=curso&accion=alta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>cicloEscolar
+			<li>nombre
+			<li>seccion: que cumpla /^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i, Ejem AB444-Z99
+			<li>academia
+			<li>nrc
+			<li>diasSemana_Horas: arreglo donde el indice sea el dia de la semana (0 para domingo y 6 para sabado)  y el valor sea las horas de ese dia, Ejem. arre[1]=3 seria equivalente a decir lunes=3 horas
+			<li>fechaInicio
+			<li>fechaFinal
+			</ul>
+		<li>Ejemplo: website/?ctrl=curso&accion=alta&cicloEscolar=2014A&nombre=Compiladores&seccion=CC100-D02&academia=COM&nrc=80321&diasSemana_Horas[1]=3&diasSemana_Horas[5]=4&fechaInicio=14/02/2014&fechaFinal=20/07/2014
+	</ul>
+	
+	<h4>Baja</h4>
+	<p>Elimina curso</p>
+	<ul>
+		<li>Url: website/?ctrl=curso&accion=baja
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>seccion: que cumpla /^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i, Ejem AB444-Z99
+			</ul>
+		<li>Ejemplo: website/?ctrl=curso&accion=baja&seccion=CC100-D02
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta curso</p>
+	<ul>
+		<li>Url: website/?ctrl=curso&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>seccion: que cumpla /^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i, Ejem AB444-Z99
+			</ul>
+		<li>Ejemplo: website/?ctrl=curso&accion=consulta&seccion=CC100-D02
+	</ul>
+
+
+	<h2>Listas</h2>
+	Nombre Archivo: listasCtrl.php
+	<h3>Acciones</h3>
+	
+	<h4>Alta</h4>
+	<p>Crea una Lista</p>
+	<ul>
+		<li>Url: website/?ctrl=listas&accion=alta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>alumnos: arreglo de alumnos
+			<li>curso: existente
+			<li>cicloEscolar: existente
+			</ul>
+		<li>Ejemplo: website/?ctrl=listas&accion=alta&alumnos[]=pepe&alumnos[]=diego&curso=CC100-D05&cicloEscolar=2014A
+	</ul>
+	
+	<h4>Modificar</h4>
+	<p>Modifica una Lista</p>
+	<ul>
+		<li>Url: website/?ctrl=listas&accion=modificar
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>alumnos: arreglo de alumnos existentes
+			<li>curso: existente
+			<li>cicloEscolar: existente
+			<li>lista: existente
+			</ul>
+		<li>Ejemplo: website/?ctrl=listas&accion=modificar&alumnos[]=pepe&alumnos[]=diego&curso=CC100-D05&cicloEscolar=2014A&lista=14
+	</ul>
+	
+	<h4>Baja</h4>
+	<p>Elimina Lista</p>
+	<ul>
+		<li>Url: website/?ctrl=listas&accion=baja
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>lista: existente
+			</ul>
+		<li>Ejemplo: website/?ctrl=listas&accion=baja&lista=14
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta Lista</p>
+	<ul>
+		<li>Url: website/?ctrl=listas&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>lista: existente
+			</ul>
+		<li>Ejemplo: website/?ctrl=listas&accion=consulta&lista=14
+	</ul>
+
+
+
+	<h2>Profesor</h2>
+	Nombre Archivo: profesorCtrl.php
+	<h3>Acciones</h3>
+	
+	<h4>Alta</h4>
+	<p>Crea un profesor</p>
+	<ul>
+		<li>Url: website/?ctrl=profesor&accion=alta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>nombre: que cumpla /^([a-z| ]+$/i
+			<li>codigo
+			</ul>
+		<li>Ejemplo: website/?ctrl=profesor&accion=alta&nombre=michelle&codigo=D23652396
+	</ul>
+	
+	<h4>Baja</h4>
+	<p>Elimina profesor</p>
+	<ul>
+		<li>Url: website/?ctrl=profesor&accion=baja
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>codigo
+			</ul>
+		<li>Ejemplo: website/?ctrl=profesor&accion=baja&codigo=D23652396
+	</ul>
+	
+	<h4>Consulta</h4>
+	<p>Consulta profesor</p>
+	<ul>
+		<li>Url: website/?ctrl=profesor&accion=consulta
+		<li>Parametros Forzosos: 
+			<ul>
+			<li>codigo
+			</ul>
+		<li>Ejemplo: website/?ctrl=profesor&accion=consulta&codigo=D23652396
+	</ul>
+
+</body>
+</html>

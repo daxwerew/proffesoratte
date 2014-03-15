@@ -28,4 +28,10 @@ class alumnosMdl{
 		//si todo salio bien
 		return array("Pepe","Camacho","Computación");
 	}
+	
+	function modificar($nombre,$codigo,$carrera,$email){
+		
+		//si todo salio bien
+		return array($nombre,$carrera);
+	}
 }
