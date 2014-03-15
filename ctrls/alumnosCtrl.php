@@ -1,17 +1,18 @@
 <?php
-class alumnosCtrl{
+require_once('ControladorComun.php');
+class alumnosCtrl extends ControladorComun{
+	/*
 	public $modelo;
 	function __construct(){
 		//Definimos el modelo
 		require('mdls/alumnosMdl.php');
 		$this->modelo = new alumnosMdl();
-	}
+	}*/
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
 			$error='Alumnos, no hay accion';
 			require('vistas/error.php');
-			die;
 		}
 
 
@@ -34,14 +35,12 @@ class alumnosCtrl{
 					if( !preg_match("/^([a-z| ]+$/i",$nombre) ){
 						$error='nombre de alumno no convencional';
 						require('vistas/error.php');
-						die;
 					}
 
 					//email
 					if( !preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i",$email) ){
 						$error='nombre de alumno no convencional';
 						require('vistas/error.php');
-						die;
 					}
 
 				
@@ -89,9 +88,9 @@ class alumnosCtrl{
 
 				
 					//Ahora si le hablo al modelo
-					$status = $this->modelo->consulta($codigo);
-					if( $status ){
-						require('vistas/alumnoConsulta.php');
+					$resultado = $this->modelo->consulta($codigo);
+					if( $resultado ){
+						require('vistas/alumnosConsulta.php');
 					}else{
 						$error = 'Ocurrio un error al consultar alumno';
 						require('vistas/error.php');
