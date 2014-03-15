@@ -7,3 +7,5 @@ if(isset($error))
 		</table>";
 else
 	echo 'Esto ya valio';
+
+die;

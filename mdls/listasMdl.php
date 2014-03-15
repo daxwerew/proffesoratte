@@ -1,12 +1,12 @@
 <?php
-class alumnosMdl{
+class listasMdl{
 	public $bd_driver;
 	
 	function __construct(){
 		//podrias aqui construir manejador bd
 	}
 	
-	function alta($nombre,$codigo,$carrera,$email){
+	function alta($alumnos,$curso,$cicloEscolar){
 		//Va ir a insertar a la base de datos
 		
 		//si todo salio bien
@@ -15,7 +15,7 @@ class alumnosMdl{
 		return false;
 	}
 	
-	function baja($codigo){
+	function baja($lista){
 		
 		//si todo salio bien
 		return true;
@@ -23,9 +23,19 @@ class alumnosMdl{
 		return false;
 	}
 	
-	function consulta($codigo){
+	function consultar($lista){
 		
 		//si todo salio bien
-		return array("Pepe","Camacho","Computación");
+		return true;
+		//sino
+		return false;
+	}
+	
+	function modificar($alumnos,$curso,$cicloEscolar,$lista){
+		
+		//si todo salio bien
+		return true;
+		//sino
+		return false;
 	}
 }
