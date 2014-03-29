@@ -23,7 +23,7 @@ class alumnosCtrl extends ControladorComun{
 					$carrera = $_GET['carrera'];
 					$email   = $_GET['email'];
 
-					//alumno name
+					//name
 					if( !preg_match('/^[a-z| ]+$/i',$nombre) ){
 						$error="nombre de alumno $nombre no convencional";
 						require('vistas/error.php');
