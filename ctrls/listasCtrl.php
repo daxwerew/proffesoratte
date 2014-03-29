@@ -41,31 +41,6 @@ class listasCtrl extends ControladorComun{
 				break;
 
 
-			case 'modificar':
-				//Validar datos
-
-					if( !isset($_GET['alumnos']) || !isset($_GET['curso']) ||
-							!isset($_GET['cicloEscolar']) || !isset($_GET['lista']) ){
-						$error='no se recibieron datos completos para modificar una lista';
-						require('vistas/error.php');
-					}
-					$alumnos = $_GET['alumnos'];
-					$curso = $_GET['curso'];
-					$cicloEscolar = $_GET['cicloEscolar'];
-					$lista = $_GET['lista'];
-
-				
-				//Ahora si le hablo al modelo
-				$status = $this->modelo->modificar($alumnos,$curso,$cicloEscolar,$lista);
-				if( $status ){
-					//Cargo vista de bien hecho
-					require('vistas/listasViews/listaConsulta.php');
-				}else{
-					require('vistas/error.php');
-				}
-				break;
-
-
 			case 'baja':
 					//Validar datos
 					if(  !isset($_GET['lista'])  ){
@@ -105,6 +80,32 @@ class listasCtrl extends ControladorComun{
 						$error = 'Ocurrio un error al consultar lista';
 						require('vistas/error.php');
 					}
+				break;
+
+
+			case 'modificar':
+				//Validar datos
+
+					if( !isset($_GET['alumnos']) || !isset($_GET['curso']) ||
+							!isset($_GET['cicloEscolar']) || !isset($_GET['lista']) ){
+						$error='no se recibieron datos completos para modificar una lista';
+						require('vistas/error.php');
+					}
+					$alumnos = $_GET['alumnos'];
+					$curso = $_GET['curso'];
+					$cicloEscolar = $_GET['cicloEscolar'];
+					$lista = $_GET['lista'];
+
+				
+				//Ahora si le hablo al modelo
+				$status = $this->modelo->modificar($alumnos,$curso,$cicloEscolar,$lista);
+				if( $status ){
+					//Cargo vista de bien hecho
+					require('vistas/listasViews/listaConsulta.php');
+				}else{
+					require('vistas/error.php');
+				}
+				break;
 
 
 			default:

@@ -13,7 +13,7 @@ class asistenciasCtrl extends ControladorComun{
 		switch( $_GET['accion'] ){
 
 			case 'alta':
-				//Validar datos, arreglo[codigo]=asistencia , fecha
+				//Validations
 					if( !isset($_GET['grupo']) || !isset($_GET['fecha']) || !isset($_GET['alumnos']) ){
 						$error='no se recibieron datos completos para macar asistencias';
 						require('vistas/error.php');
@@ -31,19 +31,47 @@ class asistenciasCtrl extends ControladorComun{
 
 					//aqui validare fecha, todavia no se como la voy a enviar
 				
-				//Ahora si le hablo al modelo
+				//Model call
 				$status = $this->modelo->alta($grupo,$alumnos,$fecha);
 				if( $status ){
-					//Cargo vista de bien hecho
-					require('vistas/asistenciasViews/asistenciasConsulta.php');
+					require('vistas/asistencias/insertado.php');
 				}else{
 					require('vistas/error.php');
 				}
 				break;
 
 
+				
+
+
+			case 'consulta':
+					//Validations
+					if( !isset($_GET['grupo']) ){
+						$error='no se recibio datos para consulta';
+						require('vistas/error.php');
+					}
+					$grupo = $_GET['grupo'];
+
+					$status = $this->modelo->consulta($grupo);
+					if( $status ){
+						require('vistas/asistencias/consulta.php');
+					}else{
+						$error = 'Ocurrio un error al consultar alumno';
+						require('vistas/error.php');
+					}
+
+
+				break;
+
+
+
+
+
+
+
+
 			case 'modificar':
-					//Validar datos
+					//Validating
 
 					if( !isset($_GET['grupo']) || !isset($_GET['alumnos']) || !isset($_GET['fecha'])  ){
 						$error='no se recibio datos para modificacion';
@@ -62,37 +90,14 @@ class asistenciasCtrl extends ControladorComun{
 					}
 
 				
-					//Ahora si le hablo al modelo
+					//Model Call
 					$status = $this->modelo->modifica($grupo,$alumnos,$fecha);
 					if( $status ){
-						require('vistas/asistenciasViews/asistenciaConsulta.php');
+						require('vistas/asistencias/consulta.php');
 					}else{
 						$error = 'Ocurrio un error al modificar';
 						require('vistas/error.php');
 					}
-
-				break;
-
-
-			case 'consulta':
-					//Validar datos
-					if( !isset($_GET['grupo']) ){
-						$error='no se recibio datos para consulta';
-						require('vistas/error.php');
-					}
-					$grupo = $_GET['grupo'];
-
-
-				
-					//Ahora si le hablo al modelo
-					$status = $this->modelo->consulta($grupo);
-					if( $status ){
-						require('vistas/asistenciasViews/asistenciasConsulta.php');
-					}else{
-						$error = 'Ocurrio un error al consultar alumno';
-						require('vistas/error.php');
-					}
-
 
 				break;
 

@@ -1,23 +1,42 @@
 <?php
-	if( isset($_GET['ctrl']) ){
+	session_start();
 
-		//Carga ctrl Correspondiente
-		$controlador = "{$_GET['ctrl']}Ctrl";
+	//Default Values
+	$get_ctrl  = (isset($_GET['ctrl']))?$_GET['ctrl']:'alumnos';
+	$get_accion = (isset($_GET['accion']))?$_GET['accion']:'consulta';
 
-		if(file_exists("ctrls/{$controlador}.php")){
-			require("ctrls/{$controlador}.php");
-			$ctrl = new $controlador();
+	//Logged in?
+	if( isset($_SESSION['usu']) ){
 
-		}else{
-			$error="{$_GET['ctrl']} no es un controlador valido";
+		//Verify Permissions
+		if( !isset(  $_SESSION['usu'][$get_ctrl][$get_accion] ) ){
+			$error="No tienes permiso para $get_accion en $get_ctrl";
 			require('vistas/error.php');
 		}
 
+		//Getting Controller Name
+		$controlador = "{$get_ctrl}Ctrl";
+
+		if(  !file_exists("ctrls/{$controlador}.php")  ){
+			$error="$get_ctrl no es un controlador valido";
+			require('vistas/error.php');
+		}
+
+		require("ctrls/{$controlador}.php");
+		$ctrl = new $controlador();
+
+
 	}else{
-		//ctrl default
-		require('ctrls/alumnosCtrl.php');
-		$ctrl = new alumnosCtrl();
+
+		//Storing QueryString, to redirect to it after loging in
+		if( !isset($_SESSION['old_query_string']) AND  $get_ctrl!='login' ) 
+			$_SESSION['old_query_string'] = $_SERVER['QUERY_STRING'];
 		
+		//Not logged huh?, then controller=login and accion=in
+		$_GET['accion'] = 'in';
+		require("ctrls/loginCtrl.php");
+		$ctrl = new loginCtrl();
+
 	}
 	
 	$ctrl->ejecutar();

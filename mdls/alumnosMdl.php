@@ -1,10 +1,6 @@
 <?php
-class alumnosMdl{
-	public $bd_driver;
-	
-	function __construct(){
-		//podrias aqui construir manejador bd
-	}
+require_once('ModeloComun.php');
+class alumnosMdl extends ModeloComun{
 	
 	function alta($nombre,$codigo,$carrera,$email){
 		//Va ir a insertar a la base de datos

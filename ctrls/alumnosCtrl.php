@@ -1,13 +1,6 @@
 <?php
 require_once('ControladorComun.php');
 class alumnosCtrl extends ControladorComun{
-	/*
-	public $modelo;
-	function __construct(){
-		//Definimos el modelo
-		require('mdls/alumnosMdl.php');
-		$this->modelo = new alumnosMdl();
-	}*/
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
@@ -19,8 +12,7 @@ class alumnosCtrl extends ControladorComun{
 		switch( $_GET['accion'] ){
 
 			case 'alta':
-				//Validar datos
-
+					//Validations
 					if( !isset($_GET['nombre']) || !isset($_GET['codigo']) ||
 							!isset($_GET['carrera']) || !isset($_GET['email']) ){
 						$error='no se recibieron datos completos para dar de alta un alumno';
@@ -31,7 +23,7 @@ class alumnosCtrl extends ControladorComun{
 					$carrera = $_GET['carrera'];
 					$email   = $_GET['email'];
 
-					//Nombre
+					//alumno name
 					if( !preg_match('/^[a-z| ]+$/i',$nombre) ){
 						$error="nombre de alumno $nombre no convencional";
 						require('vistas/error.php');
@@ -43,12 +35,10 @@ class alumnosCtrl extends ControladorComun{
 						require('vistas/error.php');
 					}
 
-				
-				//Ahora si le hablo al modelo
+				//Model call
 				$status = $this->modelo->alta($nombre,$codigo,$carrera,$email);
 				if( $status ){
-					//Cargo vista de bien hecho
-					require('vistas/alumnoInsertado.php');
+					require('vistas/alumnos/insertado.php');
 				}else{
 					require('vistas/error.php');
 				}
@@ -56,7 +46,7 @@ class alumnosCtrl extends ControladorComun{
 
 
 			case 'baja':
-					//Validar datos
+					//Validations
 
 					if(  !isset($_GET['codigo'])  ){
 						$error='no se recibio codigo';
@@ -65,10 +55,9 @@ class alumnosCtrl extends ControladorComun{
 					$codigo = $_GET['codigo'];
 
 				
-					//Ahora si le hablo al modelo
 					$status = $this->modelo->baja($codigo);
 					if( $status ){
-						require('vistas/alumnoBorrado.php');
+						require('vistas/alumnos/borrado.php');
 					}else{
 						$error = 'Ocurrio un error al dar de baja';
 						require('vistas/error.php');
@@ -78,7 +67,6 @@ class alumnosCtrl extends ControladorComun{
 
 
 			case 'consulta':
-					//Validar datos
 
 					if(  !isset($_GET['codigo'])  ){
 						$error='no se recibio codigo';
@@ -86,11 +74,10 @@ class alumnosCtrl extends ControladorComun{
 					}
 					$codigo = $_GET['codigo'];
 
-				
-					//Ahora si le hablo al modelo
+
 					$resultado = $this->modelo->consulta($codigo);
 					if( $resultado ){
-						require('vistas/alumnosConsulta.php');
+						require('vistas/alumnos/consulta.php');
 					}else{
 						$error = 'Ocurrio un error al consultar alumno';
 						require('vistas/error.php');
@@ -99,7 +86,6 @@ class alumnosCtrl extends ControladorComun{
 
 				break;
 			case 'modificar':
-				//Validar datos
 
 					if( !isset($_GET['codigo']) ){
 						$error='no se recibieron datos completos para modificar alumno';
@@ -111,24 +97,20 @@ class alumnosCtrl extends ControladorComun{
 					$carrera = isset($_GET['carrera'])?$_GET['carrera']:null;
 					$email   = isset($_GET['email'])?$_GET['email']:null;
 
-					//Nombre
 					if( isset($nombre) && !preg_match("/^[a-z| ]+$/i",$nombre) ){
 						$error='nombre de alumno no convencional';
 						require('vistas/error.php');
 					}
 
-					//email
 					if( isset($email) && !preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i",$email) ){
 						$error='nombre de alumno no convencional';
 						require('vistas/error.php');
 					}
 
 				
-				//Ahora si le hablo al modelo
 				$resultado = $this->modelo->modificar($nombre,$codigo,$carrera,$email);
 				if( $resultado ){
-					//Cargo vista de bien hecho
-					require('vistas/alumnosConsulta.php');
+					require('vistas/alumnos/consulta.php');
 				}else{
 					require('vistas/error.php');
 				}
