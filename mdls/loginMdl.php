@@ -4,7 +4,7 @@ class loginMdl extends ModeloComun{
 	
 	function buscarUsuario($codigo,$password){
 
-		$query = $this->mysqli->prepare(
+		$stmt = $this->mysqli->prepare(
 		"SELECT
 				codigo,
 				nombre,paterno,materno,
@@ -19,28 +19,32 @@ class loginMdl extends ModeloComun{
 				codigo = ? AND 
 				password = ?"
 		);
-		$query->bind_param("ss",$codigo,$password);
-		$query->execute();
-
-		$resulset = $query->get_result();
-
-		if( $resulset->num_rows )
+		$stmt->bind_param("ss",$codigo,$password);
+		
+		if( $stmt->execute() )
 		{
+			/* bind result variables */
+			$stmt->bind_result($codigo, $nombre, $paterno, $materno, $ctrl_nombre, $acci_nombre);
 
-			$tupla = $resulset->fetch_assoc();
-			$usuarioDatos['codigo'] = $tupla['codigo'];
-			$usuarioDatos['nombre'] = $tupla['nombre'];
-			$usuarioDatos['nombre_completo'] = "{$tupla['nombre']} {$tupla['paterno']} {$tupla['materno']}";
-			
-			do{
-				$usuarioDatos[$tupla['ctrl_nombre']][$tupla['acci_nombre']]=true;
-			}
-			while ($tupla = $resulset->fetch_assoc());
+			/* fetch values */
+			$stmt->fetch();
+			$usuarioDatos['codigo'] = $codigo;
+			$usuarioDatos['nombre'] = $nombre;
+			$usuarioDatos['nombre_completo'] = "{$nombre} {$paterno} {$materno}";
+
+		    do{
+		        $usuarioDatos[$ctrl_nombre][$acci_nombre]=true;
+		    }
+		    while( $stmt->fetch() );
 		}
 		else
 		{
 			$usuarioDatos = false;
 		}
+
+	    /* close statement */
+	    $stmt->close();
+	    
 		return $usuarioDatos;
 	}
 

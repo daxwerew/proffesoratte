@@ -1,6 +1,6 @@
 <!--?php var_dump($_SERVER);die;?-->
 <body>
-<script src="../../../jquery-2.1.0.js"></script>
+<script src="../../jquery-2.1.0.js"></script>
 <script>
 	$(document).ready(function(){		
 		$("#enviar").click(function(){

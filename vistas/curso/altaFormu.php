@@ -1,5 +1,5 @@
 <html>
-<script src="../../../jquery-2.1.0.js"></script>
+<script src="../../jquery-2.1.0.js"></script>
 <script>
 $(document).ready(function(){
 

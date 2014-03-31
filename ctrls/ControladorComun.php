@@ -36,12 +36,12 @@ class ControladorComun{
 
 			if(   !array_key_exists( $expected_var, $_VARS )   )
 			{
-				return array(false, $expected_var, 'No existe');
+				return array(false, $expected_var, 'No se recibio');
 			}
 
 			if(   !preg_match( $regex, $_VARS[$expected_var] )   )
 			{
-				return array(false, $expected_var, 'No cumple');
+				return array(false, $expected_var, 'No valido');
 			}
 			$respuesta[$expected_var] = $_VARS[$expected_var];
 

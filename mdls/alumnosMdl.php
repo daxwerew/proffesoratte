@@ -45,33 +45,34 @@ class alumnosMdl extends ModeloComun{
 	
 	function consulta($codigo){
 
-		$query = $this->mysqli->prepare(
+		$stmt = $this->mysqli->prepare(
 		'SELECT codigo,nombre,paterno,
 				materno,carr_nombre,
 				alum_email,alum_celular,
 				alum_github,alum_website 
 		 FROM usuario NATURAL JOIN alumno NATURAL JOIN carrera 
 		 WHERE codigo=? AND tusu_id=3');
-		$query->bind_param("s",$codigo);
+		$stmt->bind_param("s",$codigo);
 		
-		if(  $query->execute() ){
+		if(  $stmt->execute() ){
 
-			$resulset = $query->get_result();
+			/* bind result variables */
+			$stmt->bind_result($codigo, $nombre, $paterno, $materno,
+									$carr_nombre,$alum_email,$alum_celular,
+									$alum_github,$alum_website);
 
-			if( $resulset->num_rows > 0 ){
-				$tupla = $resulset->fetch_assoc();
+			/* fetch values */
+			$stmt->fetch();
 	
-				$alumDatos['codigo'] = $tupla['codigo'];
-				$alumDatos['nombre'] = $tupla['nombre'];
-				$alumDatos['nombre_completo'] = "{$tupla['nombre']} {$tupla['paterno']} {$tupla['materno']}";
-				$alumDatos['carrera'] = $tupla['carr_nombre'];
-				$alumDatos['email'] = $tupla['alum_email'];
-				$alumDatos['celular'] = $tupla['alum_celular'];
-				$alumDatos['github'] = $tupla['alum_github'];
-				$alumDatos['website'] = $tupla['alum_website'];
-			}
-			else
-				$alumDatos=false;
+			$alumDatos['codigo'] = $codigo;
+			$alumDatos['nombre'] = $nombre;
+			$alumDatos['nombre_completo'] = "{$nombre} {$paterno} {$materno}";
+			$alumDatos['carrera'] = $carr_nombre;
+			$alumDatos['email'] = $alum_email;
+			$alumDatos['celular'] = $alum_celular;
+			$alumDatos['github'] = $alum_github;
+			$alumDatos['website'] = $alum_website;
+
 		}
 		else
 		 	$alumDatos=false;
