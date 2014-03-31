@@ -1,7 +1,7 @@
 Proffesoratte
 =============
 
-Descripcion
+Descripción
 -------------
 Aplicación Web administradora de clases escolares, orientado a las necesidades del profesor
 
