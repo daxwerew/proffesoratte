@@ -13,33 +13,28 @@ class alumnosCtrl extends ControladorComun{
 
 			case 'alta':
 					//Validations
-					if( !isset($_GET['nombre']) || !isset($_GET['codigo']) ||
-							!isset($_GET['carrera']) || !isset($_GET['email']) ){
-						$error='no se recibieron datos completos para dar de alta un alumno';
-						require('vistas/error.php');
-					}
-					$nombre = $_GET['nombre'];
-					$codigo = $_GET['codigo'];
-					$carrera = $_GET['carrera'];
-					$email   = $_GET['email'];
+					$arregloVars = $this->validateVars($_POST,array(
+						'codigo'     => '/^[A-Z0-9]{7,9}$/i',
+						'nombre'     => '/^[a-z| ]+$/i',
+						'paterno'    => '/^[a-z| ]+$/i',
+						'materno'    => '/^[a-z| ]+$/i',
+						'carrera'    => '/^[0-9]+$/i',
+						'email'      => '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i'
+					));
 
-					//name
-					if( !preg_match('/^[a-z| ]+$/i',$nombre) ){
-						$error="nombre de alumno $nombre no convencional";
-						require('vistas/error.php');
+					if( $arregloVars[0]===false ){
+						$error="{$arregloVars[1]}, {$arregloVars[2]}";
+						require('vistas/error.php');die;
 					}
 
-					//email
-					if( !preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i",$email) ){
-						$error='nombre de alumno no convencional';
-						require('vistas/error.php');
-					}
+					extract($arregloVars);
 
 				//Model call
-				$status = $this->modelo->alta($nombre,$codigo,$carrera,$email);
+				$status = $this->modelo->alta($codigo,$nombre,$paterno,$materno,$carrera,$email);
 				if( $status ){
 					require('vistas/alumnos/insertado.php');
 				}else{
+					$error='Error en el modelin';
 					require('vistas/error.php');
 				}
 				break;
@@ -47,12 +42,16 @@ class alumnosCtrl extends ControladorComun{
 
 			case 'baja':
 					//Validations
+					$arregloVars = $this->validateVars($_POST,array(
+						'codigo'     => '/^[A-Z0-9]{7,9}$/i'
+					));
 
-					if(  !isset($_GET['codigo'])  ){
-						$error='no se recibio codigo';
-						require('vistas/error.php');
+					if( $arregloVars[0]===false ){
+						$error="{$arregloVars[1]}, {$arregloVars[2]}";
+						require('vistas/error.php');die;
 					}
-					$codigo = $_GET['codigo'];
+
+					extract($arregloVars);
 
 				
 					$status = $this->modelo->baja($codigo);
@@ -67,17 +66,22 @@ class alumnosCtrl extends ControladorComun{
 
 
 			case 'consulta':
+					//Validations
+					$arregloVars = $this->validateVars($_POST,array(
+						'codigo'     => '/^[A-Z0-9]{7,9}$/i'
+					));
 
-					if(  !isset($_GET['codigo'])  ){
-						$error='no se recibio codigo';
-						require('vistas/error.php');
+					if( $arregloVars[0]===false ){
+						$error="{$arregloVars[1]}, {$arregloVars[2]}";
+						require('vistas/error.php');die;
 					}
-					$codigo = $_GET['codigo'];
+					extract($arregloVars);
 
-
+					//Model
 					$resultado = $this->modelo->consulta($codigo);
 					if( $resultado ){
-						require('vistas/alumnos/consulta.php');
+						$vision = print_r($resultado,1);
+						require('vistas/visionTemporal.php');
 					}else{
 						$error = 'Ocurrio un error al consultar alumno';
 						require('vistas/error.php');
@@ -86,29 +90,31 @@ class alumnosCtrl extends ControladorComun{
 
 				break;
 			case 'modificar':
+				//Validations
+				$arregloVars = $this->validateVars($_POST,array(
+					'codigo'     => '/^[A-Z0-9]{7,9}$/i',
+					'nombre'     => '/^[a-z| ]+$/i',
+					'paterno'    => '/^[a-z| ]+$/i',
+					'materno'    => '/^[a-z| ]+$/i',
+					'carrera'    => '/^[0-9]+$/i',
+					'email'      => '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i',
+					'celular'    => '/^[0-9]{6,14}$/i',
+					'github'     => '/^.+$/i',//REMINDER, PUT URL REGEXP
+					'website'     => '/^.+$/i',//REMINDER, PUT URL REGEXP
+				));
 
-					if( !isset($_GET['codigo']) ){
-						$error='no se recibieron datos completos para modificar alumno';
-						require('vistas/error.php');
-					}
+				if( $arregloVars[0]===false ){
+					$error="{$arregloVars[1]}, {$arregloVars[2]}";
+					require('vistas/error.php');die;
+				}
 
-					$codigo = $_GET['codigo'];
-					$nombre = isset($_GET['nombre'])?$_GET['nombre']:null;
-					$carrera = isset($_GET['carrera'])?$_GET['carrera']:null;
-					$email   = isset($_GET['email'])?$_GET['email']:null;
+				extract($arregloVars);
 
-					if( isset($nombre) && !preg_match("/^[a-z| ]+$/i",$nombre) ){
-						$error='nombre de alumno no convencional';
-						require('vistas/error.php');
-					}
-
-					if( isset($email) && !preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i",$email) ){
-						$error='nombre de alumno no convencional';
-						require('vistas/error.php');
-					}
-
-				
-				$resultado = $this->modelo->modificar($nombre,$codigo,$carrera,$email);
+				//Model
+				$resultado = $this->modelo->modificar(
+									$codigo,$nombre,$paterno,
+									$materno,$carrera,$email,
+									$celular, $github, $website);
 				if( $resultado ){
 					require('vistas/alumnos/consulta.php');
 				}else{

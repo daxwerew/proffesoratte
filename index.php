@@ -1,4 +1,5 @@
 <?php
+
 	session_start();
 
 	//Default Values
@@ -9,7 +10,7 @@
 	if( isset($_SESSION['usu']) ){
 
 		//Verify Permissions
-		if( !isset(  $_SESSION['usu'][$get_ctrl][$get_accion] ) ){
+		if( !isset(  $_SESSION['usu'][$get_ctrl][$get_accion])&& $get_ctrl!='login' ){
 			$error="No tienes permiso para $get_accion en $get_ctrl";
 			require('vistas/error.php');
 		}

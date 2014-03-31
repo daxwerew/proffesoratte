@@ -4,11 +4,11 @@ class loginMdl extends ModeloComun{
 	
 	function buscarUsuario($codigo,$password){
 
-		$query = $this->DB->prepare("
-			SELECT
+		$query = $this->mysqli->prepare(
+		"SELECT
 				codigo,
 				nombre,paterno,materno,
-				controlador_nombre,accion_nombre
+				ctrl_nombre,acci_nombre
 			FROM usuario 
 				NATURAL JOIN tipousuario
 				NATURAL JOIN permisos
@@ -33,7 +33,7 @@ class loginMdl extends ModeloComun{
 			$usuarioDatos['nombre_completo'] = "{$tupla['nombre']} {$tupla['paterno']} {$tupla['materno']}";
 			
 			do{
-				$usuarioDatos[$tupla['controlador_nombre']][$tupla['accion_nombre']]=true;
+				$usuarioDatos[$tupla['ctrl_nombre']][$tupla['acci_nombre']]=true;
 			}
 			while ($tupla = $resulset->fetch_assoc());
 		}

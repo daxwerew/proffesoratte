@@ -1,15 +1,15 @@
 <?php
 class ModeloComun{
-	public $DB;
+	public $mysqli;
 
 	function __construct(){
 
 		require('/../db.inc.php');
 		
-		$this->DB = new mysqli($db_site, $db_user, $db_pass, $db_schema);
-		if ( $this->DB->connect_error) {
-		    die('Error de Conexión (' . $mysqli->connect_errno . ') '
-		            . $mysqli->connect_error);
+		$this->mysqli = new mysqli($db_site, $db_user, $db_pass, $db_schema);
+		if ( $this->mysqli->connect_error) {
+		    die('Error de Conexión (' . $this->mysqli->connect_errno . ') '
+		            . $this->mysqli->connect_error);
 		}
 
 	}

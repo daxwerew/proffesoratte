@@ -13,34 +13,7 @@ class loginCtrl extends ControladorComun{
 
 		switch( $_GET['accion'] ){
 			case 'in':
-				if( $this->estaLoggeado() ){
-					require('vistas/login/home.php');
-
-				}else if( count($_POST)>0 ){
-
-					$logeoUsuario = $this->modelo->buscarUsuario($_POST['usu'],$_POST['pas']);
-					if( $logeoUsuario ){
-						$_SESSION['usu'] = $logeoUsuario;
-						
-						if( isset($_SESSION['old_query_string']) ){
-							$old_query_string = $_SESSION['old_query_string'];
-							unset($_SESSION['old_query_string']);
-							header("Location: index.php?{$old_query_string}");
-						}
-						else{
-							require('vistas/login/logeado.php');
-						}
-
-					}else{
-						$error='login incorrecto, revisa codigo y password';
-						require('vistas/error.php');
-					}
-
-				}
-				else
-				{
-					header("Location: vistas/login/logme.php");
-				}
+				$this->loginin();
 				break;
 
 			case 'out':
@@ -54,6 +27,43 @@ class loginCtrl extends ControladorComun{
 		}
 
 	}
+
+
+
+	function loginin(){
+
+		if( $this->estaLoggeado() ){
+			require('vistas/login/home.php');
+
+		}else if( count($_POST)>0 ){
+
+			$logeoUsuario = $this->modelo->buscarUsuario($_POST['usu'],$_POST['pas']);
+			if( $logeoUsuario ){
+				$_SESSION['usu'] = $logeoUsuario;
+				
+				if( isset($_SESSION['old_query_string']) ){
+					$old_query_string = $_SESSION['old_query_string'];
+					unset($_SESSION['old_query_string']);
+					header("Location: index.php?{$old_query_string}");
+				}
+				else{
+					require('vistas/login/logeado.php');
+				}
+
+			}else{
+				$error='login incorrecto, revisa codigo y password';
+				require('vistas/error.php');
+			}
+
+		}
+		else
+		{
+			header("Location: vistas/login/logme.php");
+		}
+
+	}
+
+
 
 	function estaLoggeado(){
 		if(isset($_SESSION['usu']))
