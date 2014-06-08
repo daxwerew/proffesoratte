@@ -7,13 +7,14 @@
 	$get_accion = (isset($_GET['accion']))?$_GET['accion']:'consulta';
 
 	//Logged in?
+	$_SESSION['usu']=true;//parche para no validar login
 	if( isset($_SESSION['usu']) ){
 
-		//Verify Permissions
+		/*/Verify Permissions
 		if( !isset(  $_SESSION['usu'][$get_ctrl][$get_accion])&& $get_ctrl!='login' ){
 			$error="No tienes permiso para $get_accion en $get_ctrl";
 			require('vistas/error.php');
-		}
+		}//*/
 
 		//Getting Controller Name
 		$controlador = "{$get_ctrl}Ctrl";

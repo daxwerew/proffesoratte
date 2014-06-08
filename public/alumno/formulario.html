@@ -1,0 +1,49 @@
+<form method='POST' action='index.php?ctrl=alumnos&amp;accion=<!--<accion>-->'>
+	<div>
+		<label for='codigo'>Código</label>
+		<input id='codigo' name='codigo' placeholder='Capture su código de la UdeG' pattern="^[A-Z0-9]{7,9}$" value='<!--<codigo>-->' >
+	</div>
+	<div>
+		<label for='nombre'>Nombre</label>
+		<input id='nombre' name='nombre' placeholder='Escriba aqui nombre' pattern="^[a-zA-Z ]+$" value='<!--<nombre>-->' >
+	</div>
+	<div>
+		<label for='paterno'>Apellido Paterno</label>
+		<input id='paterno' name='paterno' placeholder='Apellido Paterno' pattern="^[a-zA-Z ]+$" value='<!--<paterno>-->'>
+	</div>
+	<div>
+		<label for='materno'>Apellido Materno</label>
+		<input id='materno' name='materno' placeholder='Apellido Materno' pattern="^[a-zA-Z ]+$" value='<!--<materno>-->'>
+	</div>
+
+	<div>
+		<label for='carrera'>Carrera</label>
+		<select id='carrera' name='carrera'>
+			<!--<<repetirCarrera>>-->
+			<option value='<!--<idCarrera>-->'><!--<nombreCarrera>--></option>
+			<!--<<finrepetir>>-->
+		</select>
+	</div>
+
+	<div>
+		<label for='email'>Correo</label>
+		<input id='email' name='email' type='email' value='<!--<email>-->'>
+	</div>
+
+	<div>
+		<label for='telefono'>Numero de Telefono (Casa o Celular)</label>
+		<input id='telefono' name='telefono' type='tel' maxlength="10" value='<!--<telefono>-->'>
+	</div>
+
+	<div>
+		<label for='github'>Github</label>
+		<input id='github' name='github' type='url' value='<!--<github>-->'>
+	</div>
+
+	<div>
+		<label for='website'>Pagina Web</label>
+		<input id='website' name='website' type='url' value='<!--<website>-->'>
+	</div>
+
+	<button type='submit'>Enviar</button>
+</form>

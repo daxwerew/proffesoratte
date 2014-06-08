@@ -1,0 +1,12 @@
+<table>
+	<thead>
+	</thead>
+	<tbody>
+		{{repetir-alumnos}}
+			<tr>
+				<td>{{nombre_alumno}}</td>
+			</tr>
+		{{repetir-fin}}
+
+	</tbody>
+</table>

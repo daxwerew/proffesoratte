@@ -1,0 +1,25 @@
+<script>
+	$( document ).ready(function() {
+		switch(<!--<accion>-->){
+			case 'consulta':
+				$('input').attr('readonly','readonly');
+			break;
+		}
+	});
+</script>
+<form method='POST' action='index.php?ctrl=curso&amp;accion=<!--<accion>-->'>
+	<div>
+		<label for='clave'>Clave</label>
+		<input id='clave' name='clave' placeholder='Capture clave del curso' pattern="^([a-zA-Z]{2}[0-9]{3}|[a-zA-Z]?[0-9]{4})" value='<!--<clave>-->' >
+	</div>
+	<div>
+		<label for='nombre'>Nombre</label>
+		<input id='nombre' name='nombre' placeholder='Nombre del curso' pattern="^[a-zA-Z ]+$" value='<!--<nombre>-->' >
+	</div>
+	<div>
+		<label for='departamento'>Departamento</label>
+		<input id='departamento' name='departamento' placeholder='Departamento' pattern="^[a-zA-Z ]+$" value='<!--<departamento>-->'>
+	</div>
+
+	<button type='submit'>Enviar</button>
+</form>

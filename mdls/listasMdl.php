@@ -1,41 +1,229 @@
 <?php
-class listasMdl{
-	public $bd_driver;
+require_once('ModeloComun.php');
+class listasMdl extends ModeloComun{
 	
-	function __construct(){
-		//podrias aqui construir manejador bd
-	}
-	
-	function alta($alumnos,$curso,$cicloEscolar){
+	function alta($cicloEscolar,$curso,$seccion){
 		//Va ir a insertar a la base de datos
-		
-		//si todo salio bien
-		return true;
-		//sino
-		return false;
+		$all_query_ok=true;
+
+		$query = $this->mysqli->prepare(
+		'INSERT INTO lista(cicl_id,curs_id,alcu_seccion)
+			VALUES(?,?,?)');
+		$query->bind_param("iis",$cicloEscolar,$curso,$seccion);
+
+		$query->execute()? null : $all_query_ok=false;
+
+		return $all_query_ok;
+
 	}
-	
-	function baja($lista){
-		
-		//si todo salio bien
-		return true;
-		//sino
-		return false;
+
+
+	function altaAlumnos($lista, $alumnos){
+		$all_query_ok=true;
+
+		$query = $this->mysqli->prepare(
+		'INSERT INTO lista_alumnos(alcu_id,usu_id)
+			VALUES(?,?)');
+
+		foreach($alumnos as $alumno){
+			$query->bind_param("ii",$lista,$alumno);
+			$query->execute()? null : $all_query_ok=false;
+		}
+		return $all_query_ok;
+
 	}
-	
-	function consultar($lista){
+
+
+	function consultaLista(){
+
+		$stmt = $this->mysqli->prepare(
+		'SELECT alcu_id,cicl_nombre,curs_nombre,alcu_seccion
+			FROM lista
+			NATURAL JOIN curso
+			NATURAL JOIN cicloescolar');
 		
-		//si todo salio bien
-		return true;
-		//sino
-		return false;
+		if(  $stmt->execute() ){
+
+			/* bind result variables */
+			$stmt->bind_result($idLista, $nombreCiclo, $nombreCurso, $seccion );
+
+			/* fetch values */
+			while( $stmt->fetch() ){
+				$diccionario['error'] = false;
+				$diccionario['repetirListas'][] = 
+					array(
+						'idLista'      => $idLista,
+						'nombreCiclo'  => $nombreCiclo,
+						'nombreCurso'  => $nombreCurso,
+						'seccion'      => $seccion
+					);
+			}
+		}
+		else{
+			$diccionario['error' ] = true;
+			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+		return $diccionario;
+    }
+
+	function consultaAlumnos(){
+		$stmt = $this->mysqli->prepare(
+		'SELECT usu_id,codigo,nombre,paterno,materno
+			FROM usuario
+			NATURAL JOIN alumno');
+		
+		if(  $stmt->execute() ){
+
+			/* bind result variables */
+			$stmt->bind_result($idAlumno,$codigo,$nombre,$paterno,$materno );
+
+			/* fetch values */
+			while( $stmt->fetch() ){
+				$diccionario['repetirAlumnos'][] = 
+					array(
+						'idAlumno'   => $idAlumno,
+						'codigo'     => $codigo,
+						'nombre'     => $nombre,
+						'paterno'    => $paterno,
+						'materno'    => $materno
+					);
+			}
+		}
+		else{
+			$diccionario['error' ] = true;
+			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+
+		return $diccionario;
+		
 	}
-	
-	function modificar($alumnos,$curso,$cicloEscolar,$lista){
+
+	function consultaAlumnosLista($idLista){
+
+		$stmt = $this->mysqli->prepare(
+		'SELECT cicl_nombre,curs_nombre,alcu_seccion,usu_id,codigo,nombre,paterno,materno
+			FROM lista_alumnos
+			NATURAL JOIN lista
+			NATURAL JOIN usuario
+			NATURAL JOIN curso
+			NATURAL JOIN cicloescolar
+			WHERE alcu_id=?'
+		);
+		$stmt->bind_param("i",$idLista);
 		
-		//si todo salio bien
-		return true;
-		//sino
-		return false;
+		if(  $stmt->execute() ){
+
+			/* bind result variables */
+			$stmt->bind_result(
+				$cicloEscolar, $materia, $seccion,
+				$usu_id, $codigo, $nombre, $paterno, $materno
+			);
+
+			/* fetch values */
+			if( $stmt->fetch() ){
+				$diccionario['error'  ] = false;
+				$diccionario['cicloEscolar'] = $cicloEscolar;
+				$diccionario['materia'     ] = $materia;
+				$diccionario['seccion'     ] = $seccion;
+				$diccionario['repetirAlumnos'][] = 
+					array(
+						'idAlumno' => $usu_id, 
+						'codigo'   => $codigo, 
+						'nombre'   => $nombre, 
+						'paterno'  => $paterno, 
+						'materno'  => $materno
+					);
+			}
+			else{
+				$diccionario['error'  ] = true;
+				$diccionario['mensaje'] = "No existe lista con ese id";
+			}
+
+			while( $stmt->fetch() ){
+				$diccionario['repetirAlumnos'][] = 
+					array(
+						'idAlumno' => $usu_id, 
+						'codigo'   => $codigo, 
+						'nombre'   => $nombre, 
+						'paterno'  => $paterno, 
+						'materno'  => $materno
+					);
+			}
+		}
+		else{
+			$diccionario['error' ] = true;
+			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+
+		return $diccionario;
+
+	}
+
+	function generaDiccionarioAltaLista(){
+
+
+		$stmt = $this->mysqli->prepare(
+		'SELECT cicl_id,cicl_nombre
+		 FROM cicloescolar');
+		//$stmt->bind_param("s",$codigo);
+		
+		if(  $stmt->execute() ){
+
+			/* bind result variables */
+			$stmt->bind_result( $idCicloEscolar, $nombreCicloEscolar);
+
+			/* fetch values */
+			while( $stmt->fetch() ){
+				$diccionario['error'    ] = false;
+				$diccionario['repetirCicloEscolar'][] = 
+					array(
+						'idCicloEscolar'      => $idCicloEscolar,
+						'nombreCicloEscolar'  => $nombreCicloEscolar
+					);
+			}
+		}
+		else{
+			$diccionario['error' ] = true;
+			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+			return $diccionario;
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+
+
+		$stmt = $this->mysqli->prepare(
+			'SELECT curs_id,curs_clave,curs_nombre
+		 	 FROM curso'
+		 );
+
+		if(  $stmt->execute() ){
+
+			/* bind result variables */
+			$stmt->bind_result( $idCurso, $nombreCurso1, $nombreCurso2);
+
+			/* fetch values */
+			while( $stmt->fetch() ){
+				$diccionario['error'    ] = false;
+				$diccionario['repetirCurso'][] = 
+					array(
+						'idCurso'      => $idCurso,
+						'nombreCurso'  => "$nombreCurso1 $nombreCurso2"
+					);
+			}
+		}
+		else{
+			$diccionario['error' ] = true;
+			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+			return $diccionario;
+		}
+		$diccionario['seccion']='';
+		
+		return $diccionario;
 	}
 }

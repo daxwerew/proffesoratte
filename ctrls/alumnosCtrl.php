@@ -12,54 +12,64 @@ class alumnosCtrl extends ControladorComun{
 		switch( $_GET['accion'] ){
 
 			case 'alta':
-					//Validations
-					$arregloVars = $this->validateVars($_POST,array(
-						'codigo'     => '/^[A-Z0-9]{7,9}$/i',
-						'nombre'     => '/^[a-z| ]+$/i',
-						'paterno'    => '/^[a-z| ]+$/i',
-						'materno'    => '/^[a-z| ]+$/i',
-						'carrera'    => '/^[0-9]+$/i',
-						'email'      => '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i'
-					));
 
-					if( $arregloVars[0]===false ){
-						$error="{$arregloVars[1]}, {$arregloVars[2]}";
-						require('vistas/error.php');die;
+
+					if( empty($_POST) ){
+						//Cargar Formulario
+						$this->formularioAlta();
+						die;
 					}
+
+					//Validar Variables recibidas
+					$arregloVars = $this->validateVars(
+						$_POST,
+						array(
+							'codigo'     => '/^[A-Z0-9]{7,9}$/i',
+							'nombre'     => '/^[a-z| ]+$/i',
+							'paterno'    => '/^[a-z| ]+$/i',
+							'materno'    => '/^[a-z| ]+$/i',
+							'carrera'    => '/^[0-9]+$/i',
+							'email'      => '/^([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}| *)$/i',//opcional,
+							'github'     => '/^([A-Z0-9_]{2,4}| *)$/i'//mejorar regex
+						)
+					);
 
 					extract($arregloVars);
 
-				//Model call
-				$status = $this->modelo->alta($codigo,$nombre,$paterno,$materno,$carrera,$email);
-				if( $status ){
-					require('vistas/alumnos/insertado.php');
-				}else{
-					$error='Error en el modelin';
-					require('vistas/error.php');
-				}
-				break;
-
+					//Model Call
+					$status = $this->modelo->alta(
+							$codigo,
+							$nombre,
+							$paterno,
+							$materno,
+							$carrera,
+							$email,
+							$github
+						);
+					if( $status ){
+						$this->generaPaginaDesdePlantila('exitoGenerico.html', array(
+							'mensaje'=>"Se dio de alta Alumno Exitosamente") );
+					}else{
+						$this->errorComun('Error en el modelo de alta alumnos');
+					}
+					break;
 
 			case 'baja':
 					//Validations
-					$arregloVars = $this->validateVars($_POST,array(
-						'codigo'     => '/^[A-Z0-9]{7,9}$/i'
-					));
-
-					if( $arregloVars[0]===false ){
-						$error="{$arregloVars[1]}, {$arregloVars[2]}";
-						require('vistas/error.php');die;
-					}
-
-					extract($arregloVars);
+					extract(
+						$this->validateVars($_POST,array(
+							'codigo'     => '/^[A-Z0-9]{7,9}$/i'
+						))
+					);
 
 				
 					$status = $this->modelo->baja($codigo);
 					if( $status ){
-						require('vistas/alumnos/borrado.php');
+						$this->generaPaginaDesdePlantila('exitoGenerico.html', array(
+							'mensaje'=>"Se dio de baja Alumno con código {$codigo}"
+						));
 					}else{
-						$error = 'Ocurrio un error al dar de baja';
-						require('vistas/error.php');
+						$this->errorComun('Ocurrio un error al dar de baja');
 					}
 
 				break;
@@ -67,30 +77,33 @@ class alumnosCtrl extends ControladorComun{
 
 			case 'consulta':
 					//Validations
-					$arregloVars = $this->validateVars($_POST,array(
+					$arregloVars = $this->validateVars($_GET,array(
 						'codigo'     => '/^[A-Z0-9]{7,9}$/i'
 					));
-
-					if( $arregloVars[0]===false ){
-						$error="{$arregloVars[1]}, {$arregloVars[2]}";
-						require('vistas/error.php');die;
-					}
 					extract($arregloVars);
 
 					//Model
-					$resultado = $this->modelo->consulta($codigo);
-					if( $resultado ){
-						$vision = print_r($resultado,1);
-						require('vistas/visionTemporal.php');
+					$datosAlumno = $this->modelo->consulta($codigo);
+					if( !$datosAlumno['error'] ){
+						$this->generaPaginaDesdePlantila('alumno/consulta.html', $datosAlumno );
+
 					}else{
-						$error = 'Ocurrio un error al consultar alumno';
-						require('vistas/error.php');
+						$this->errorComun($datosAlumno['mensaje']);
+						die;
 					}
 
 
 				break;
 			case 'modificar':
 				//Validations
+				if( !isset($_POST['codigo']) ){
+					$this->errorComun('No se recibieron datos');
+					die;
+				}elseif( !isset($_POST['nombre']) ){
+					$this->formularioModificar($_POST['codigo']);
+					die;
+				}
+
 				$arregloVars = $this->validateVars($_POST,array(
 					'codigo'     => '/^[A-Z0-9]{7,9}$/i',
 					'nombre'     => '/^[a-z| ]+$/i',
@@ -98,34 +111,61 @@ class alumnosCtrl extends ControladorComun{
 					'materno'    => '/^[a-z| ]+$/i',
 					'carrera'    => '/^[0-9]+$/i',
 					'email'      => '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i',
-					'celular'    => '/^[0-9]{6,14}$/i',
-					'github'     => '/^.+$/i',//REMINDER, PUT URL REGEXP
-					'website'     => '/^.+$/i',//REMINDER, PUT URL REGEXP
+					'telefono'   => '/^([0-9]{6,14}| *)$/i',
+					'github'     => '/^(.+| *)$/i',//mejorar regex
+					'website'    => '/^(.+| *)$/i'//mejorar regex
 				));
-
-				if( $arregloVars[0]===false ){
-					$error="{$arregloVars[1]}, {$arregloVars[2]}";
-					require('vistas/error.php');die;
-				}
-
 				extract($arregloVars);
 
 				//Model
 				$resultado = $this->modelo->modificar(
 									$codigo,$nombre,$paterno,
 									$materno,$carrera,$email,
-									$celular, $github, $website);
+									$telefono, $github, $website);
 				if( $resultado ){
-					require('vistas/alumnos/consulta.php');
+					$this->generaPaginaDesdePlantila('exitoGenerico.html', array(
+						'mensaje'=>"Se modifico alumno con {$codigo}"
+					));
 				}else{
-					require('vistas/error.php');
+					$this->errorComun('Error en el modelo de modificar alumnos');
 				}
 				break;
 
 
 			default:
-				$error='Alumno, Accion Incorrecta';
-				require('vistas/error.php');
+				$this->errorComun('Alumno, Accion Incorrecta');
 		}
 	}
+
+	function formularioAlta(){
+
+		$diccionario["repetirCarrera"] = $this->modelo->generaDiccionarioCarreras();
+		$diccionario["accion"   ] = 'alta';
+		$diccionario["codigo"   ] = '';
+		$diccionario["nombre"   ] = '';
+		$diccionario["paterno"  ] = '';
+		$diccionario["materno"  ] = '';
+		$diccionario["email"    ] = '';
+		$diccionario["telefono" ] = '';
+		$diccionario["github"   ] = '';
+
+		$this->generaPaginaDesdePlantila('alumno/formulario.html', $diccionario );
+		die;
+	}
+
+	function formularioModificar($codigo){
+		$diccionario = $this->modelo->consulta($codigo);
+		if( $diccionario['error'] ){
+			$this->generaPaginaDesdePlantila('errorComun.html', array(
+				'error'       => $diccionario['mensaje'],
+				'paginaAtras' => $_SERVER['REQUEST_URI']
+			) );
+		}
+		$diccionario["accion"   ] = 'modificar';
+		$diccionario["repetirCarrera"] = $this->modelo->generaDiccionarioCarreras();
+
+		$this->generaPaginaDesdePlantila('alumno/formulario.html', $diccionario );
+		die;
+	}
+
 }

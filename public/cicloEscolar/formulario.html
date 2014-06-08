@@ -1,0 +1,16 @@
+<form method='POST' action='index.php?ctrl=cicloEscolar&amp;accion=<!--<accion>-->'>
+	<div>
+		<label for='ciclo'>Ciclo Escolar</label>
+		<input id='ciclo' name='ciclo' placeholder='Ciclo Escolar, ej. 2015A' pattern="^2[012][0-9]{2}[ABV]$" value='<!--<ciclo>-->' >
+	</div>
+	<div>
+		<label for='fechaInicio'>Fecha Inicio</label>
+		<input id='fechaInicio' name='fechaInicio' type='date' pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}$" value='<!--<fechaInicio>-->' >
+	</div>
+	<div>
+		<label for='fechaFinal'>Fecha Final</label>
+		<input id='fechaFinal' name='fechaFinal' type='date' pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}$" value='<!--<fechaFinal>-->' >
+	</div>
+
+	<button type='submit'>Enviar</button>
+</form>

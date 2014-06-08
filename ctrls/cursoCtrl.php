@@ -10,6 +10,32 @@ class cursoCtrl extends ControladorComun{
 
 		switch( $_GET['accion'] ){
 			case 'alta':
+
+					if( empty($_POST) ){
+						//Cargar Formulario
+						$diccionario["accion"   ] = 'alta';
+						$diccionario["clave"   ] = '';
+						$diccionario["nombre"   ] = '';
+						$diccionario["departamento"  ] = '';
+
+						$this->generaPaginaDesdePlantila('curso/formulario.html', $diccionario );
+						die;
+					}
+
+					//Validar Variables recibidas
+					//'/^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i'
+					$arregloVars = $this->validateVars(
+						$_POST,
+						array(
+							'clave'     => '/^([a-z]{2}\d{3}|[a-z]?\d{4})$/i',
+							'nombre'     => '/^[a-z| ]+$/i',
+							'departamento'    => '/^([a-z| ]+| *)$/i'
+						)
+					);
+					extract($arregloVars);
+
+
+				/*
 				if( count($_POST)==0 ){
 					require('vistas/curso/altaFormu.php');
 					die;
@@ -74,42 +100,30 @@ class cursoCtrl extends ControladorComun{
 					}
 					$dia_ini += $un_dia;
 				}
+				*/
 
-				//Llamada al modelo	
-				$estatus = $this->modelo->alta($cicloEscolar,$nombre,$seccion,$academia,$nrc,$diasCurso_Horas,$evaluacion,$rubros);
-				//Carga vista dependiendo de la respuesta del modelo
+				$estatus = $this->modelo->alta($clave,$nombre,$departamento);
 				if( $estatus ){
-					require('vistas/curso/alta.php');
+					$this->exitoGenerico('Se creo Curso Exitosamente');
 				}else{
-					$error='modelo no pudo crear Curso';
-					require('vistas/error.php');
+					$this->errorComun('modelo no pudo crear Curso');
 				}
 				break;
 
 			case 'baja':
 				//Validar datos
 				//Datos requeridos
-				if( !isset($_GET['seccion']) ){
-					$error='no se indico curso';
-					require('vistas/error.php');
-					die;
-				}
-				if( !preg_match("/^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i",$_GET['seccion']) ){
-					$error='curso incorrecta';
-					require('vistas/error.php');
-					die;
-				}
-
-
-				//Llamada al modelo	
-				$datos = $this->modelo->baja($_GET['seccion']);
-				//Carga vista dependiendo de la respuesta del modelo
-				if( is_array($datos) ){
-					require('vistas/curso/baja.php');
-				}else{
-					$error='falla interna';
-					require('vistas/error.php');
-				}
+					extract( $this->validateVars($_POST,array(
+						'clave'     => '/^([a-z]{2}[0-9]{3}|[a-z]?[0-9]{4})$/i'
+					)));
+					//Llamada al modelo	
+					$estatus = $this->modelo->baja($clave);
+					//Carga vista dependiendo de la respuesta del modelo
+					if( !$estatus['error'] ){
+						$this->exitoGenerico("Se dio de baja Curso {$clave} Exitosamente");
+					}else{
+						$this->errorComun($estatus['mensaje']);
+					}
 				break;
 
 
@@ -117,27 +131,20 @@ class cursoCtrl extends ControladorComun{
 			case 'consulta':
 				//Validar datos
 				//Datos requeridos
-				if( !isset($_GET['seccion']) ){
-					$error='no se indico curso';
-					require('vistas/error.php');
-					die;
-				}
-				if( !preg_match("/^([a-z]{2}\d{3}|[a-z]?\d{4})-[a-z]\d{2}$/i",$_GET['seccion']) ){
-					$error='curso incorrecta';
-					require('vistas/error.php');
-					die;
-				}
+					extract( $this->validateVars($_GET,array(
+						'clave'     => '/^([a-z]{2}[0-9]{3}|[a-z]?[0-9]{4})$/i'
+					)));
 
+					//Model
+					$datos = $this->modelo->consulta($clave);
+					if( !$datos['error'] ){
+						$this->generaPaginaDesdePlantila('curso/consulta.html', $datos );
 
-				//Llamada al modelo	
-				$datos = $this->modelo->consulta($_GET['seccion']);
-				//Carga vista dependiendo de la respuesta del modelo
-				if( is_array($datos) ){
-					require('vistas/curso/consulta.php');
-				}else{
-					$error='falla interna';
-					require('vistas/error.php');
-				}
+					}
+					else{
+						$this->errorComun($datos['mensaje']);
+						die;
+					}
 				break;
 
 

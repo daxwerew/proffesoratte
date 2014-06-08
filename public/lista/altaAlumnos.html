@@ -1,0 +1,24 @@
+<div id='consulta'>
+
+	<div class='botones'>
+		<form method='POST' action='index.php?ctrl=listas&amp;accion=altaAlumnos'>
+			<div class='conjuntoDato'>
+				<label class='tipoDato' for='lista'>Listas</label>
+				<select id='lista' name='lista' class='dato'>
+					<!--<<repetirListas>>-->
+					<option value='<!--<idLista>-->'><!--<nombreCurso>--> <!--<seccion>--></option>
+					<!--<<finrepetir>>-->
+				</select>
+			</div>
+			<div class='conjuntoDato'>
+				<label class='tipoDato' for='alumnos'>Alumnos</label>
+				<select id='alumnos' name='alumnos[]' class='dato' multiple='multiple' size='10'>
+					<!--<<repetirAlumnos>>-->
+					<option value='<!--<idAlumno>-->'><!--<codigo>--> <!--<paterno>--> <!--<nombre>--></option>
+					<!--<<finrepetir>>-->
+				</select>
+			</div>
+			<input type='submit' value='Enviar Alumnos'>
+		</form>
+	</div>
+</div>

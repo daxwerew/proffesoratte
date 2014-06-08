@@ -15,11 +15,11 @@ class ControladorComun{
 		}
 
 
-		//Temporal Patch willbe removed after GUI is done
+		/*/Temporal Patch willbe removed after GUI is done
 		if(  (!isset($_POST) || count($_POST)<1) AND $_GET['ctrl']!='login'  ){
 			require( "vistas/temporal.php");die;
 		}
-	    //Temporal Patch End
+	    //Temporal Patch End*/
 	}
 
 	/**
@@ -31,20 +31,34 @@ class ControladorComun{
 	{
 		
 		$respuesta = array();
+		$errores = array();
 		foreach($expected_data as $expected_var => $regex )
 		{
 
-			if(   !array_key_exists( $expected_var, $_VARS )   )
-			{
-				return array(false, $expected_var, 'No se recibio');
+			if(   !array_key_exists( $expected_var, $_VARS ) ){
+				$errores['repetirErrores'][] =
+					array(
+						'dato'  => $expected_var,
+						'error' => 'No se recibio'
+					);
 			}
-
-			if(   !preg_match( $regex, $_VARS[$expected_var] )   )
-			{
-				return array(false, $expected_var, 'No valido');
+			elseif(   !preg_match( $regex, $_VARS[$expected_var] ) ){
+				$errores['repetirErrores'][] = 
+					array(
+						'dato'  => $expected_var, 
+						'error' => 'No valido'
+					);
 			}
-			$respuesta[$expected_var] = $_VARS[$expected_var];
+			else
+				$respuesta[$expected_var] = $_VARS[$expected_var];
 
+		}
+
+
+		if( count($errores)>0 ){
+			$errores['paginaAtras'] = $_SERVER['REQUEST_URI'];
+			$this->generaPaginaDesdePlantila('errorValidacion.html', $errores );
+			die;
 		}
 
 		$respuesta[0]=true;
@@ -54,6 +68,70 @@ class ControladorComun{
 	}
 
 
+	function generaPaginaDesdePlantila($nombre_plantilla, $diccionario)
+	{
+
+		$pagina = file_get_contents("public/{$nombre_plantilla}");
+
+		//Busca zonas a repetir
+		foreach ($diccionario as $key => $value) {
+			if( substr($key,0,7)=='repetir' && is_array($value) ){
+
+				$posinicio = strpos($pagina, "<!--<<$key>>-->");
+				$posfin = strpos($pagina, "<!--<<finrepetir>>-->",$posinicio);
+				$posfin = $posfin+strlen("<!--<<finrepetir>>-->");
+				$length_reemplazo = $posfin-$posinicio;
+				$texto_a_repetir = substr($pagina, $posinicio, $length_reemplazo);
+
+				$texto_remplazo='';
+				foreach($value as $diccionarioInterno){
+					
+					if( is_array($diccionarioInterno) ){
+						$diccionarioInterno = $this->despulgarDiccionario($diccionarioInterno);
+						$texto_remplazo .=strtr($texto_a_repetir,$diccionarioInterno);
+					}
+
+				}
+
+				$pagina = substr_replace($pagina,$texto_remplazo,$posinicio,$posfin-$posinicio);
+
+				unset($diccionario[$key]);
+			}
+		}
+		$diccionario = $this->despulgarDiccionario($diccionario);
+
+		$pagina = strtr($pagina,$diccionario);
+
+		echo file_get_contents("public/header.html"), $pagina, file_get_contents("public/footer.html");
+		die;
+	}
+
+	//modifica los indices del diccionario con el sig formato <!--<$key>-->
+	function despulgarDiccionario( $diccionario ){
+		if( is_array( $diccionario ) )
+			foreach( $diccionario as $key => $value ){
+				$diccionario["<!--<$key>-->"]=$value;
+				unset($diccionario[$key]);
+			}
+
+		return $diccionario;
+	}
+
+	function errorComun( $mensajeError ){
+		$diccionario =
+			array(
+				'error'       => $mensajeError,
+				'paginaAtras' => $_SERVER['REQUEST_URI']
+			);
+		$this->generaPaginaDesdePlantila('errorComun.html', $diccionario );
+		die;
+	}
+
+	function exitoGenerico( $mensaje ){
+		$diccionario = array( 'mensaje' => $mensaje );
+		$this->generaPaginaDesdePlantila('exitoGenerico.html', $diccionario );
+		die;
+	}
 
 
 }

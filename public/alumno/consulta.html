@@ -1,0 +1,38 @@
+<div id='consulta'>
+	<div class='conjuntoDato'>
+		<span class='tipoDato'>Código: </span>
+		<span class='dato'><!--<codigo>--></span>
+	</div>
+	<div class='dato'>
+		<span class='tipoDato'>Nombre: </span>
+		<span class='dato' title='Nombre de pila'><!--<nombre>--></span> 
+		<span class='dato' title='Apellido paterno'><!--<paterno>--></span> 
+		<span class='dato' title='Apellido materno'><!--<materno>--></span>
+	</div>
+	<div class='conjuntoDato'>
+		<span class='tipoDato'>Carrera: </span>
+		<span class='dato'><!--<carrera>--></span>
+	</div>
+	<div class='conjuntoDato'>
+		<span class='tipoDato'>Correo Electronico: </span>
+		<span class='dato'><!--<email>--></span>
+	</div>
+	<div class='conjuntoDato'>
+		<span class='tipoDato'>Telefono: </span>
+		<span class='dato'><!--<telefono>--></span>
+	</div>
+	<div class='conjuntoDato'>
+		<span class='tipoDato'>GitHub: </span>
+		<span class='dato'><!--<github>--></span>
+	</div>
+	<div class='botones'>
+		<form method='POST' action='index.php?ctrl=alumnos&accion=baja'>
+			<input type='hidden' value='<!--<codigo>-->' name='codigo'>
+			<input type='submit' value='Eliminar Alumno'>
+		</form>
+		<form method='POST' action='index.php?ctrl=alumnos&accion=modificar'>
+			<input type='hidden' value='<!--<codigo>-->' name='codigo'>
+			<input type='submit' value='Modificar Alumno'>
+		</form>
+	</div>
+</div>

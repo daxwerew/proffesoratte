@@ -4,113 +4,125 @@ class listasCtrl extends ControladorComun{
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
-			$error='listas, no hay accion';
-			require('vistas/error.php');
+			$this->errorComun('listas, no hay accion');
 			die;
 		}
 
 
 		switch( $_GET['accion'] ){
-
 			case 'alta':
 				//Validar datos
+					if( empty($_POST) ){
+						//Cargar Formulario
+						$this->formularioAlta();
+						die;
+					}
 
-				if( !isset($_GET['alumnos']) || !isset($_GET['curso']) ||
-						!isset($_GET['cicloEscolar'])  ){
-					$error='no se recibieron datos completos para dar de alta un lista';
-					require('vistas/error.php');
-				}
-				$alumnos = $_GET['alumnos'];
-				$curso = $_GET['curso'];
-				$cicloEscolar = $_GET['cicloEscolar'];
+					//Validar Variables recibidas
+					$arregloVars = $this->validateVars(
+						$_POST,
+						array(
+							'cicloEscolar' => '/^[0-9]{1,8}$/i',
+							'curso'        => '/^[0-9]{1,8}$/i',
+							'seccion'      => '/^[a-z][0-9]{2}$/i'
+						)
+					);
 
-				if(!is_array($alumnos)){
-					$error='alumnos deberia ser arreglo';
-					require('vistas/error.php');
-				}
+					extract($arregloVars);
 
 				
 				//Ahora si le hablo al modelo
-				$status = $this->modelo->alta($alumnos,$curso,$cicloEscolar);
+				$status = $this->modelo->alta($cicloEscolar,$curso,$seccion);
 				if( $status ){
-					//Cargo vista de bien hecho
-					require('vistas/listas/consulta.php');
+					$this->generaPaginaDesdePlantila('exitoGenerico.html', array(
+						'mensaje'=>"Se dio de alta Lista Exitosamente") );
 				}else{
-					require('vistas/error.php');
+					$this->errorComun('Error en el modelo');
 				}
 				break;
 
 
-			case 'baja':
-					//Validar datos
-					if(  !isset($_GET['lista'])  ){
-						$error='no se recibio lista';
-						require('vistas/error.php');
-					}
-					$lista = $_GET['lista'];
-
-				
-					//Ahora si le hablo al modelo
-					$status = $this->modelo->baja($lista);
-					if( $status ){
-						require('vistas/listasViews/listaBorrada.php');
-					}else{
-						$error = 'Ocurrio un error al dar de baja';
-						require('vistas/error.php');
+			case 'altaAlumnos':
+					if( empty($_POST) ){
+						$diccionario['repetirListas' ] = $this->modelo->consultaLista()['repetirListas' ];
+						$diccionario['repetirAlumnos'] = $this->modelo->consultaLista()['repetirAlumnos'];
+						if( isset($diccionario['idAlumno']) ){
+							$this->generaPaginaDesdePlantila('lista/altaAlumnos.html', $diccionario );
+						}else{
+							$this->errorComun('Error en logica de negocio');
+							die;
+						}
 					}
 
-				break;
+					//Validar Variables recibidas
+					foreach( $_POST['alumnos'] as $alumno )
+						if( !preg_match( '/^[0-9]{1,8}$/i', $alumno) )
+							$this->generaPaginaDesdePlantila('errorValidacion.html', array(
+								'dato'  => "Alumno $alumno", 
+								'error' => 'No valido'
+								)
+							);
+					$alumnos = $_POST['alumnos'];
+					unset($_POST['alumnos']);
 
+					extract($this->validateVars(
+						$_POST,
+						array(
+							'lista'   => '/^[0-9]{1,8}$/i'
+						)
+					));
 
-			case 'consultar':
-					//Validar datos
-
-					if(  !isset($_GET['lista'])  ){
-						$error='no se recibio lista';
-						require('vistas/error.php');
-					}
-					$lista = $_GET['lista'];
-
-				
-					//Ahora si le hablo al modelo
-					$status = $this->modelo->consulta($lista);
-					if( $status ){
-						require('vistas/listasViews/listaConsulta.php');
-					}else{
-						$error = 'Ocurrio un error al consultar lista';
-						require('vistas/error.php');
-					}
-				break;
-
-
-			case 'modificar':
-				//Validar datos
-
-					if( !isset($_GET['alumnos']) || !isset($_GET['curso']) ||
-							!isset($_GET['cicloEscolar']) || !isset($_GET['lista']) ){
-						$error='no se recibieron datos completos para modificar una lista';
-						require('vistas/error.php');
-					}
-					$alumnos = $_GET['alumnos'];
-					$curso = $_GET['curso'];
-					$cicloEscolar = $_GET['cicloEscolar'];
-					$lista = $_GET['lista'];
-
-				
 				//Ahora si le hablo al modelo
-				$status = $this->modelo->modificar($alumnos,$curso,$cicloEscolar,$lista);
+				$status = $this->modelo->altaAlumnos($lista,$alumnos);
 				if( $status ){
-					//Cargo vista de bien hecho
-					require('vistas/listasViews/listaConsulta.php');
+					$this->generaPaginaDesdePlantila('exitoGenerico.html', array(
+						'mensaje'=>"Se dio de alta Alumnos en esta Lista Exitosamente") );
 				}else{
-					require('vistas/error.php');
+					$this->errorComun('Error en el modelo');
 				}
+
+				break;
+			case 'consulta':
+					//Validations
+					if( empty($_GET['idLista']) ){
+						$diccionario = $this->modelo->consultaLista();
+						if( !$diccionario['error'] ){
+							$this->generaPaginaDesdePlantila('lista/consulta1.html', $diccionario );
+						}else{
+							$this->errorComun($diccionario['mensaje']);
+							die;
+						}
+					}
+
+					$arregloVars = $this->validateVars($_GET,array(
+						'idLista'     => '/^[0-9]{1,10}$/i'
+					));
+					extract($arregloVars);
+
+					//Model
+					$diccionario = $this->modelo->consultaAlumnosLista($idLista);
+					if( !$diccionario['error'] ){
+						$this->generaPaginaDesdePlantila('lista/consulta2.html', $diccionario );
+
+					}else{
+						$this->errorComun($diccionario['mensaje']);
+						die;
+					}
+
+
 				break;
 
 
 			default:
-				$error='lista, Accion Incorrecta';
-				require('vistas/error.php');
+				$this->errorComun('lista, Accion Incorrecta');
 		}
+	}
+
+	function formularioAlta(){
+
+		$diccionario = $this->modelo->generaDiccionarioAltaLista();
+		$diccionario['accion']='alta';
+		$this->generaPaginaDesdePlantila('lista/formularioLista.html', $diccionario );
+		die;
 	}
 }

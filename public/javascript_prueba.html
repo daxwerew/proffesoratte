@@ -1,0 +1,22 @@
+<script type='text/javascript'>
+	function validaContra(e){
+		if( document.getElementById('contra').value !== document.getElementById('confirma').value){
+			var nodo = document.createElement("div");
+			nodo.setAttribute("id","divid");
+			nodo.appendChild(document.createTextNode("Contras no coinciden"));
+
+			nodoHermano=document.getElementById('confirma').nextSibling;
+			nodoHermano.parentNode.insertBefore(nodo,nodoHermano);
+
+		}
+		else{
+			var nodo = document.getElementById('divid');
+			nodo.parentNode.removeChild(nodo);
+		}
+	}
+</script>
+Mayus: <input onkeypress='this.value=this.value.toUpperCase();'>
+<br>
+Contrasena: <input id='contra'><br>
+Confirmacion: <input id='confirma'><br>
+<button onclick='validaContra();'>Enviar</button>

@@ -37,7 +37,7 @@ class alumnosMdl extends ModeloComun{
 	function baja($codigo){
 		$all_query_ok=true;
 		$query = $this->mysqli->prepare(
-		'UPDATE usuario SET activo=´N´ WHERE codigo=?');
+		'UPDATE usuario SET activo="N" WHERE codigo=?');
 		$query->bind_param("s",$codigo);
 		$query->execute()? null : $all_query_ok=false;
 		return $all_query_ok;
@@ -46,36 +46,48 @@ class alumnosMdl extends ModeloComun{
 	function consulta($codigo){
 
 		$stmt = $this->mysqli->prepare(
-		'SELECT codigo,nombre,paterno,
+		'SELECT nombre,paterno,
 				materno,carr_nombre,
 				alum_email,alum_celular,
 				alum_github,alum_website 
 		 FROM usuario NATURAL JOIN alumno NATURAL JOIN carrera 
-		 WHERE codigo=? AND tusu_id=3');
+		 WHERE codigo=? AND tusu_id=3 AND activo!="N"');
 		$stmt->bind_param("s",$codigo);
 		
 		if(  $stmt->execute() ){
 
 			/* bind result variables */
-			$stmt->bind_result($codigo, $nombre, $paterno, $materno,
-									$carr_nombre,$alum_email,$alum_celular,
-									$alum_github,$alum_website);
+			$stmt->bind_result(
+				$nombre, 	 $paterno,
+				$materno,      $carr_nombre, $alum_email,
+				$alum_celular, $alum_github, $alum_website
+			);
 
 			/* fetch values */
-			$stmt->fetch();
-	
-			$alumDatos['codigo'] = $codigo;
-			$alumDatos['nombre'] = $nombre;
-			$alumDatos['nombre_completo'] = "{$nombre} {$paterno} {$materno}";
-			$alumDatos['carrera'] = $carr_nombre;
-			$alumDatos['email'] = $alum_email;
-			$alumDatos['celular'] = $alum_celular;
-			$alumDatos['github'] = $alum_github;
-			$alumDatos['website'] = $alum_website;
-
+			if( $stmt->fetch() ){
+				$alumDatos['error'    ] = false;
+				$alumDatos['codigo'   ] = $codigo;
+				$alumDatos['nombre'   ] = $nombre;
+				$alumDatos['paterno'  ] = $paterno;
+				$alumDatos['materno'  ] = $materno;
+				$alumDatos['carrera'  ] = $carr_nombre;
+				$alumDatos['email'    ] = $alum_email;
+				$alumDatos['telefono' ] = $alum_celular;
+				$alumDatos['github'   ] = $alum_github;
+				$alumDatos['website'  ] = $alum_website;
+			}
+			else{
+		 		$alumDatos['error' ] = true;
+				$alumDatos['mensaje'] = "No existe alumno con codigo {$codigo}";
+			}
 		}
-		else
-		 	$alumDatos=false;
+		else{
+			$alumDatos['error' ] = true;
+			$alumDatos['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+
 		return $alumDatos;
 	}
 	
@@ -102,7 +114,7 @@ class alumnosMdl extends ModeloComun{
 			$nombre,$paterno,$materno,
 			$carrera,$email,$celular,
 			$github,$website,$codigo);
-
+		
 		//returns false or true
 		return $query->execute();
 	}
