@@ -130,9 +130,9 @@ class ControladorComun{
 		die;
 	}
 
-	function exitoGenerico( $mensaje ){
+	static function exitoGenerico( $mensaje ){
 		$diccionario = array( 'mensaje' => $mensaje );
-		$this->generaPaginaDesdePlantila('exitoGenerico.html', $diccionario );
+		ControladorComun::generaPaginaDesdePlantila('exitoGenerico.html', $diccionario );
 		die;
 	}
 

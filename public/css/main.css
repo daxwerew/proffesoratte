@@ -153,7 +153,9 @@ table.ejemplo,table.ejemplo td,table.ejemplo th{
 
 #menu-izq{
     border-right: solid 1px black;
+    border-bottom: solid 1px black;
     width: calc(20% - 26px);
+    padding-bottom:5em; 
 }
 
 #menu-izq a{

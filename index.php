@@ -3,7 +3,8 @@
 	session_start();
 
 	//Default Values
-	$get_ctrl  = (isset($_GET['ctrl']))?$_GET['ctrl']:'alumnos';
+	$get_ctrl  = (isset($_GET['ctrl']))?$_GET['ctrl']:
+			ControladorComun::exitoGenerico("<p>Bienvenido, sientase como en su casa.</p><p>Porfavor presione botones hasta que tenga idea de que esta haciendo.</p");
 	$get_accion = (isset($_GET['accion']))?$_GET['accion']:'consulta';
 
 	//Logged in?
