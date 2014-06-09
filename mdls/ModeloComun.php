@@ -43,4 +43,44 @@ class ModeloComun{
 	}
 
 
+	function consultaLista(){
+
+		$stmt = $this->mysqli->prepare(
+		'SELECT alcu_id,cicl_nombre,curs_nombre,alcu_seccion
+			FROM lista
+			NATURAL JOIN curso
+			NATURAL JOIN cicloescolar');
+		
+		if(  $stmt->execute() ){
+
+			/* bind result variables */
+			$stmt->bind_result($idLista, $nombreCiclo, $nombreCurso, $seccion );
+
+			/* fetch values */
+			while( $stmt->fetch() ){
+				$diccionario['error'] = false;
+				$diccionario['repetirListas'][] = 
+					array(
+						'idLista'      => $idLista,
+						'nombreCiclo'  => $nombreCiclo,
+						'nombreCurso'  => $nombreCurso,
+						'seccion'      => $seccion
+					);
+			}
+		}
+		else{
+			$diccionario['error' ] = true;
+			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+		return $diccionario;
+    }
+
+
+	function consultaListas(){
+		return $this->consultaLista();
+	}
+
+
 }

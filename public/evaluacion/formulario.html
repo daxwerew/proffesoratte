@@ -1,0 +1,30 @@
+<form method='POST' action='index.php?ctrl=evaluacion&amp;accion=alta'>
+	<div>
+		<label for='lista'>Grupo</label>
+		<select id='lista' name='lista' class='dato'>
+			<!--<<repetirListas>>-->
+			<option value='<!--<idLista>-->'><!--<nombreCurso>--> <!--<seccion>--></option>
+			<!--<<finrepetir>>-->
+		</select>
+	</div>
+
+	<div>
+		<label for='nombreEvaluacion'>Evaluacion</label>
+		<input id='nombreEvaluacion' name='nombreEvaluacion[]' placeholder='Escriba aqui nombre de evaluacion' pattern="^[a-zA-Z0-9 ]+$" value='' >
+	</div>
+	<div>
+		<label for='porcentaje'>Porcentaje</label>
+		<input id='porcentaje' name='porcentaje[]' pattern="^[0-9]{1,3}$" value='' >
+	</div>
+
+	<div>
+		<label for='nombreEvaluacion'>Evaluacion</label>
+		<input id='nombreEvaluacion' name='nombreEvaluacion[]' placeholder='Escriba aqui nombre de evaluacion' pattern="^[a-zA-Z0-9 ]+$" value='' >
+	</div>
+	<div>
+		<label for='porcentaje'>Porcentaje</label>
+		<input id='porcentaje' name='porcentaje[]' pattern="^[0-9]{1,3}$" value='' >
+	</div>
+
+	<button type='submit'>Enviar</button>
+</form>

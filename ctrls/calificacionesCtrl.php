@@ -13,13 +13,21 @@ class calificacionesCtrl extends ControladorComun{
 		switch( $_GET['accion'] ){
 
 			case 'alta':
-					//Validating
-
-					if( !isset($_GET['grupo']) || !isset($_GET['alumnos']) ||
-							!isset($_GET['evaluacion']) ){
-						$error='no se recibieron datos completos para calificar';
-						require('vistas/error.php');
+					if( empty($_POST) ){
+						//Cargar Formulario
+						$diccionario = $this->modelo->consultaListas();
+						$this->generaPaginaDesdePlantila('calificaciones/formulario.html', $diccionario);
+						die;
 					}
+
+					//Validating
+					$arregloVars = $this->validateVars(
+						$_POST,
+						array(
+							'codigo'     => '/^[A-Z0-9]{7,9}$/i',
+							'nombre'     => '/^[a-z| ]+$/i',
+						)
+					);
 
 					$grupo = $_GET['grupo'];
 					$evaluacion = $_GET['evaluacion'];
@@ -41,28 +49,21 @@ class calificacionesCtrl extends ControladorComun{
 				break;
 
 
+			case 'consultaGrupo':
+					//Validations
+					$arregloVars = $this->validateVars($_POST,array(
+						'idLista'     => '/^[0-9]{1,9}$/i'
+					));
+					extract($arregloVars);
 
-				
-
-
-			case 'consulta':
-
-					//Validating
-					if( !isset($_GET['grupo']) || !isset($_GET['evaluacion']) ){
-						$error='no se recibieron datos completos para consultar';
-						require('vistas/error.php');
+					//Model
+					$respuesta = $this->modelo->consultaEvaluandosLista($idLista);
+					if( !$respuesta['error'] ){
+						echo json_encode($respuesta);die;
 					}
-
-					$grupo = $_GET['grupo'];
-					$evaluacion = $_GET['evaluacion'];
-
-				
-					$status = $this->modelo->consulta($grupo,$evaluacion);
-					if( $status ){
-						require('vistas/calificaciones/consulta.php');
-					}else{
-						$error = 'Ocurrio un error al consultar calificaciones';
-						require('vistas/error.php');
+					else{
+						$this->errorComun($respuesta['mensaje']);
+						die;
 					}
 
 

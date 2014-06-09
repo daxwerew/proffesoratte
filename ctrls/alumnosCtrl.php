@@ -1,11 +1,9 @@
 <?php
-require_once('ControladorComun.php');
 class alumnosCtrl extends ControladorComun{
 	
 	function ejecutar(){
 		if( !isset($_GET['accion']) ){
-			$error='Alumnos, no hay accion';
-			require('vistas/error.php');
+			$this->errorComun('Alumnos, no hay accion');
 		}
 
 
@@ -163,7 +161,7 @@ class alumnosCtrl extends ControladorComun{
 		}
 		$diccionario["accion"   ] = 'modificar';
 		$diccionario["repetirCarrera"] = $this->modelo->generaDiccionarioCarreras();
-
+		
 		$this->generaPaginaDesdePlantila('alumno/formulario.html', $diccionario );
 		die;
 	}

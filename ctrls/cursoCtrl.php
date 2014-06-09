@@ -1,5 +1,4 @@
 <?php
-require_once('ControladorComun.php');
 class cursoCtrl extends ControladorComun{
 
 	function ejecutar(){

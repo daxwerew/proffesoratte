@@ -145,6 +145,7 @@ table.ejemplo,table.ejemplo td,table.ejemplo th{
 }
 
 #menu-der{
+    border-left: solid 1px black;
     width: calc(15% - 26px);
 }
 
@@ -160,6 +161,8 @@ table.ejemplo,table.ejemplo td,table.ejemplo th{
     display: block;
     -moz-border-radius: 1em 4em 1em 4em;
     border-radius: 1em 4em 1em 4em;
+    margin: 2% 0%;
+    padding: 1% 0%;
 }
 #menu-izq a:hover{
     border:1px solid #99f;

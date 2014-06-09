@@ -33,41 +33,6 @@ class listasMdl extends ModeloComun{
 
 	}
 
-
-	function consultaLista(){
-
-		$stmt = $this->mysqli->prepare(
-		'SELECT alcu_id,cicl_nombre,curs_nombre,alcu_seccion
-			FROM lista
-			NATURAL JOIN curso
-			NATURAL JOIN cicloescolar');
-		
-		if(  $stmt->execute() ){
-
-			/* bind result variables */
-			$stmt->bind_result($idLista, $nombreCiclo, $nombreCurso, $seccion );
-
-			/* fetch values */
-			while( $stmt->fetch() ){
-				$diccionario['error'] = false;
-				$diccionario['repetirListas'][] = 
-					array(
-						'idLista'      => $idLista,
-						'nombreCiclo'  => $nombreCiclo,
-						'nombreCurso'  => $nombreCurso,
-						'seccion'      => $seccion
-					);
-			}
-		}
-		else{
-			$diccionario['error' ] = true;
-			$diccionario['mensaje'] = "Error interno, de repetirse favor de reportarlo";
-		}
-	    /* cerrar sentencia */
-	    $stmt->close();
-		return $diccionario;
-    }
-
 	function consultaAlumnos(){
 		$stmt = $this->mysqli->prepare(
 		'SELECT usu_id,codigo,nombre,paterno,materno
@@ -111,7 +76,7 @@ class listasMdl extends ModeloComun{
 			NATURAL JOIN usuario
 			NATURAL JOIN curso
 			NATURAL JOIN cicloescolar
-			WHERE alcu_id=?'
+			WHERE alcu_id=? AND lial_activo="S"'
 		);
 		$stmt->bind_param("i",$idLista);
 		
@@ -164,7 +129,37 @@ class listasMdl extends ModeloComun{
 		return $diccionario;
 
 	}
+	function tieneEvaluacion($idLista){
 
+		$stmt = $this->mysqli->prepare(
+		'SELECT count(*) as cantidad
+		 FROM evaluacion
+		 WHERE alcu_id=?');
+		$stmt->bind_param("s",$idLista);
+		
+		if(  $stmt->execute() ){
+			/* bind result variables */
+			$stmt->bind_result( $cantidad );
+
+			/* fetch values */
+			if( $stmt->fetch() ){
+				if( $cantidad>0 ){
+					return true;
+				}
+				else{
+					return false;//'No hay evaluaciones para este grupo';
+				}
+			}else{
+				return 'No existe lista';
+			}
+		}
+		else{
+			return 'Error al consultar evaluaciones';
+		}
+	    /* cerrar sentencia */
+	    $stmt->close();
+
+	}
 	function generaDiccionarioAltaLista(){
 
 

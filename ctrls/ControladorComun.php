@@ -42,12 +42,15 @@ class ControladorComun{
 						'error' => 'No se recibio'
 					);
 			}
+			elseif( is_array( $_VARS[$expected_var]) ){
+				//Si es un arreglo valido dato por dato con la misma expresion, soy bien inteligentote
+				foreach( $_VARS[$expected_var]  as $valorDentroDeArreglo)
+					if(!preg_match( $regex, $valorDentroDeArreglo )){
+						$errores['repetirErrores'][]=array('dato'=>$expected_var,'error' =>"con valor $valorDentroDeArreglo no es valido");
+					}
+			}
 			elseif(   !preg_match( $regex, $_VARS[$expected_var] ) ){
-				$errores['repetirErrores'][] = 
-					array(
-						'dato'  => $expected_var, 
-						'error' => 'No valido'
-					);
+				$errores['repetirErrores'][]=array('dato'=>$expected_var,'error'=>'No valido');
 			}
 			else
 				$respuesta[$expected_var] = $_VARS[$expected_var];
@@ -68,7 +71,7 @@ class ControladorComun{
 	}
 
 
-	function generaPaginaDesdePlantila($nombre_plantilla, $diccionario)
+	static function generaPaginaDesdePlantila($nombre_plantilla, $diccionario)
 	{
 
 		$pagina = file_get_contents("public/{$nombre_plantilla}");
@@ -87,7 +90,7 @@ class ControladorComun{
 				foreach($value as $diccionarioInterno){
 					
 					if( is_array($diccionarioInterno) ){
-						$diccionarioInterno = $this->despulgarDiccionario($diccionarioInterno);
+						$diccionarioInterno = ControladorComun::despulgarDiccionario($diccionarioInterno);
 						$texto_remplazo .=strtr($texto_a_repetir,$diccionarioInterno);
 					}
 
@@ -98,7 +101,7 @@ class ControladorComun{
 				unset($diccionario[$key]);
 			}
 		}
-		$diccionario = $this->despulgarDiccionario($diccionario);
+		$diccionario = ControladorComun::despulgarDiccionario($diccionario);
 
 		$pagina = strtr($pagina,$diccionario);
 
@@ -107,7 +110,7 @@ class ControladorComun{
 	}
 
 	//modifica los indices del diccionario con el sig formato <!--<$key>-->
-	function despulgarDiccionario( $diccionario ){
+	static function despulgarDiccionario( $diccionario ){
 		if( is_array( $diccionario ) )
 			foreach( $diccionario as $key => $value ){
 				$diccionario["<!--<$key>-->"]=$value;
@@ -117,13 +120,13 @@ class ControladorComun{
 		return $diccionario;
 	}
 
-	function errorComun( $mensajeError ){
+	static function errorComun( $mensajeError ){
 		$diccionario =
 			array(
 				'error'       => $mensajeError,
 				'paginaAtras' => $_SERVER['REQUEST_URI']
 			);
-		$this->generaPaginaDesdePlantila('errorComun.html', $diccionario );
+		ControladorComun::generaPaginaDesdePlantila('errorComun.html', $diccionario );
 		die;
 	}
 
@@ -132,6 +135,5 @@ class ControladorComun{
 		$this->generaPaginaDesdePlantila('exitoGenerico.html', $diccionario );
 		die;
 	}
-
 
 }

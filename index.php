@@ -1,5 +1,5 @@
 <?php
-
+	require_once('ctrls/ControladorComun.php');
 	session_start();
 
 	//Default Values
@@ -20,8 +20,7 @@
 		$controlador = "{$get_ctrl}Ctrl";
 
 		if(  !file_exists("ctrls/{$controlador}.php")  ){
-			$error="$get_ctrl no es un controlador valido";
-			require('vistas/error.php');
+			ControladorComun::errorComun("$get_ctrl no es un controlador valido");
 		}
 
 		require("ctrls/{$controlador}.php");

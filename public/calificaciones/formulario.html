@@ -1,0 +1,66 @@
+<script>
+	$(document).ready(function(){
+		$('#lista').change(function(){
+			var parametros;
+			var alumno;
+			if( $('#lista option:selected').val() ){
+				parametros = 'idLista=' + $('#lista option:selected').val();
+				$.post('?ctrl=calificaciones&accion=consultaGrupo',parametros,function(data){
+					var miTablitaChula = $('<table></table>');
+					var tableRow,iEv;
+
+					tableRow = $('<tr></tr>');
+					tableRow.append('<td></td>');
+					for( iEv in data.evaluaciones ){
+						tableRow.append(
+							'<th>'+
+							data.evaluaciones[iEv].nombreEvaluacion+
+							'</th>'
+						);
+					}
+					miTablitaChula.append(tableRow);
+
+					for( iAl in data.alumnos ){
+						tableRow = $('<tr></tr>');
+						alumno = data.alumnos[iAl];
+						tableRow.append(
+								'<th>'+
+								alumno.codigo+' '+
+								alumno.nombre+' '+
+								alumno.paterno+' '+
+								alumno.materno+
+								'</th>'
+							);
+						for( iEv in data.evaluaciones ){
+							tableRow.append(
+								'<td><input name="calificacions['+alumno.lial_id+']'+
+								'['+data.evaluaciones[iEv].idEvaluacion+']" ></td>'
+							);
+						}
+						miTablitaChula.append(tableRow);
+					}
+					$('#contenidoTabla').append(miTablitaChula);
+				},'json');
+			}
+
+		});
+	})
+</script>
+
+<form method='POST' action='index.php?ctrl=calificaciones&amp;accion=alta'>
+	<div>
+		<label for='lista'>Grupo</label>
+		<select id='lista' name='lista' class='dato'>
+			<option selected='selected'>Seleccione</option>
+			<!--<<repetirListas>>-->
+			<option value='<!--<idLista>-->'><!--<nombreCurso>--> <!--<seccion>--></option>
+			<!--<<finrepetir>>-->
+		</select>
+	</div>
+
+	<div id='contenidoTabla'>
+
+	</div>
+
+	<button type='submit'>Enviar</button>
+</form>

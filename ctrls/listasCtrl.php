@@ -1,5 +1,4 @@
 <?php
-require_once('ControladorComun.php');
 class listasCtrl extends ControladorComun{
 	
 	function ejecutar(){
@@ -45,8 +44,8 @@ class listasCtrl extends ControladorComun{
 			case 'altaAlumnos':
 					if( empty($_POST) ){
 						$diccionario['repetirListas' ] = $this->modelo->consultaLista()['repetirListas' ];
-						$diccionario['repetirAlumnos'] = $this->modelo->consultaLista()['repetirAlumnos'];
-						if( isset($diccionario['idAlumno']) ){
+						$diccionario['repetirAlumnos'] = $this->modelo->consultaAlumnos()['repetirAlumnos'];
+						if( isset($diccionario['repetirAlumnos'][0]['idAlumno']) ){
 							$this->generaPaginaDesdePlantila('lista/altaAlumnos.html', $diccionario );
 						}else{
 							$this->errorComun('Error en logica de negocio');
@@ -72,6 +71,15 @@ class listasCtrl extends ControladorComun{
 						)
 					));
 
+					//Valida si existe evaluaciones
+					$respuesta = $this->modelo->tieneEvaluacion($lista);
+					if( $respuesta===false){
+						$this->errorComun('No existen evaluaciones');
+					}
+					elseif($respuesta!==true){
+						$this->errorComun($respuesta);
+					}
+
 				//Ahora si le hablo al modelo
 				$status = $this->modelo->altaAlumnos($lista,$alumnos);
 				if( $status ){
@@ -90,7 +98,6 @@ class listasCtrl extends ControladorComun{
 							$this->generaPaginaDesdePlantila('lista/consulta1.html', $diccionario );
 						}else{
 							$this->errorComun($diccionario['mensaje']);
-							die;
 						}
 					}
 
